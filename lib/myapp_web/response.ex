@@ -19,4 +19,9 @@ defmodule MyAppWeb.Response do
 
     Phoenix.Controller.json(conn, output)
   end
+
+  # generatic function for converting data to response code
+  @spec put_resp({:ok, any} | {:error, any}) :: {any, integer}
+  def put_resp({:ok, data}), do: {data, 200}
+  def put_resp({:error, error}), do: {error, 400}
 end

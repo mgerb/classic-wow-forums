@@ -10,7 +10,8 @@ defmodule MyApp.Mixfile do
       compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      dialyzer: [plt_add_deps: :transitive]
     ]
   end
 
@@ -43,6 +44,8 @@ defmodule MyApp.Mixfile do
       {:argon2_elixir, "~> 1.2"},
       {:guardian, "~> 1.0"},
       {:httpoison, "~> 0.13"},
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
+      {:ex_guard, "~> 1.3", only: :dev},
     ]
   end
 

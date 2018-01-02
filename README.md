@@ -1,4 +1,4 @@
-# MyApp
+# Classic WoW Forums
 
 ## Generate a new app
 `mix phx.new myapp --module MyApp --no-brunch --no-html --database postgres`
@@ -14,11 +14,11 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
 
 # Ecto
 
-## Create table
-`mix ecto.gen.migration create_user`
-`mix ecto.migrate`
+## Create new database table
+- `mix ecto.gen.migration create_user`
+- `mix ecto.migrate`
 
-## Prod
+## Production
 Running app
 `PORT=80 MIX_ENV=prod mix phx.server`
 
@@ -26,7 +26,7 @@ Running app
   - `MIX_ENV=prod mix ecto.create`
   - `MIX_ENV=prod mix ecto.migrate`
 
-## Installing Elixir on C9
+# Installing Elixir on C9
 ```
 # for some reason C9 complains this file is missing when it tries to remove couchdb
 sudo touch /etc/init.d/couchdb
@@ -40,3 +40,9 @@ sudo apt-get install esl-erlang
 sudo apt-get install elixir
 mix local.hex
 ```
+
+# Using Dialyzer for type checking
+- [Setup with Phoenix](https://github.com/jeremyjh/dialyxir/wiki/Phoenix-Dialyxir-Quickstart)
+- Uses [ExGuard](https://github.com/slashmili/ex_guard) to run every time a file is changed.
+- Run `mix guard` to start watching files.
+- Check out `.exguard.exs` for configuration.

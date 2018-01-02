@@ -4,11 +4,15 @@ defmodule MyApp.JWT do
   # ~1 year
   defp tokenTTL(), do: {52, :weeks}
 
-  def get_jwt(user, claims) do
-    case Guardian.encode_and_sign(user, claims, ttl: tokenTTL()) do
-      {:ok, token, _claims} -> {:ok, token}
-      {:error, _token, _claims} -> {:error, "JWT error"}
+  @spec add_jwt(map | {atom, any}) :: {:ok, map} | {:error, String.t}
+  def add_jwt(user) when is_map(user) do
+    case Guardian.encode_and_sign(user, user, ttl: tokenTTL()) do
+      {:ok, token, _claims} -> {:ok, Map.merge(user, %{token: token})}
+      {:error, error} -> {:error, error}
     end
   end
+
+  def add_jwt({:ok, user}), do: add_jwt(user)
+  def add_jwt({:error, error}), do: {:error, error}
 
 end

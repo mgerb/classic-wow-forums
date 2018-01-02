@@ -21,7 +21,6 @@ defmodule MyApp.Guardian do
     # the resource id so here we'll rely on that to look it up.
     id = claims["sub"]
     # resource = MyApp.get_resource_by_id(id)
-    IO.inspect(claims)
     resource = id
     {:ok,  resource}
   end
