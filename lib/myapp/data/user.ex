@@ -9,6 +9,8 @@ defmodule MyApp.Data.User do
   schema "user" do
     field :battle_net_id, :integer
     field :battletag, :string
+
+    has_many :threads, Data.Thread
     timestamps()
   end
 
