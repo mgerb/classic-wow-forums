@@ -22,4 +22,19 @@ defmodule MyAppWeb.BattleNetController do
     |>Response.json(output)
   end
 
+  # TODO: cache this end point
+  def characters(conn, _params) do
+    token = conn
+    |> MyApp.Guardian.Plug.current_claims
+    |> Map.get("access_token")
+    
+    {output, status} = token
+    |> BattleNet.User.get_user_characters
+    |> Response.put_resp
+
+    conn
+    |>put_status(status)
+    |>Response.json(output)
+  end
+
 end

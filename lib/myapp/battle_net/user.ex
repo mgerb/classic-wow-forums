@@ -7,7 +7,9 @@ defmodule MyApp.BattleNet.User do
   # grab user information from battle net api - use token for auth
   @spec get_user(String.t | {atom, any}) :: {:ok, battle_net_user} | {:error, any}
   def get_user(access_token) when is_binary(access_token) do
-    HTTPoison.get(resource_url("account/user", access_token))
+    access_token
+    |> resource_url("account/user")
+    |> HTTPoison.get
     |> parse_user_response(access_token)
   end
   def get_user({:ok, access_token}), do: get_user(access_token)
@@ -26,7 +28,19 @@ defmodule MyApp.BattleNet.User do
     end
   end
 
-  defp resource_url(path, access_token) do
+  @spec get_user_characters(String.t) :: {:ok, map} | {:error, any}
+  def get_user_characters(access_token) do
+    access_token
+    |> resource_url("wow/user/characters")
+    |> HTTPoison.get
+    |> parse_character_response
+  end
+
+  defp parse_character_response({:error, error}), do: {:error, error}
+  defp parse_character_response({:ok, %HTTPoison.Response{body: body}}), do: Poison.decode(body)
+
+  defp resource_url(access_token, path) do
     "#{api_url()}/#{path}?access_token=#{access_token}"
   end
+
 end

@@ -16,6 +16,9 @@ defmodule MyAppWeb.Router do
 
     scope "/battlenet" do
       get "/authorize", BattleNetController, :authorize
+
+      pipe_through [:api_auth]
+      get "/characters", BattleNetController, :characters
     end
 
     scope "/user" do
