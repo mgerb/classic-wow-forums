@@ -26,6 +26,23 @@ defmodule MyAppWeb.Router do
       pipe_through [:api_auth]
       get "/", UserController, :index
     end
+
+    scope "/thread" do
+      # authenticated routes
+      pipe_through [:api_auth]
+      post "/", ThreadController, :insert
+      put "/", ThreadController, :update
+    end
+
+    scope "reply" do
+      # authenticated routes
+      pipe_through [:api_auth]
+      post "/", ReplyController, :insert
+    end
+
+    scope "/category" do
+      get "/", CategoryController, :get_collection
+    end
   end
   
 end

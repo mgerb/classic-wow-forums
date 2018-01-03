@@ -5,12 +5,11 @@ defmodule MyApp.Data.User do
   alias MyApp.Repo
   alias MyApp.Data
 
-  @derive {Poison.Encoder, except: [:__meta__]}
+  @derive {Poison.Encoder, except: [:__meta__, :__struct__]}
   schema "user" do
     field :battle_net_id, :integer
     field :battletag, :string
 
-    has_many :threads, Data.Thread
     timestamps()
   end
 
@@ -55,29 +54,22 @@ defmodule MyApp.Data.User do
   end
 
   defp insert_user(params) do
-    cs = changeset(%Data.User{}, params)
-    cs
+    changeset(%Data.User{}, params)
     |> Repo.insert
-    |> process_insert_or_update
+    |> Data.Util.process_insert_or_update
+    |> filter_values
   end
 
   # it's possible for a user's battle tag to change - if so update it
   defp update_battletag(user, params) do
-    cs = Data.User.changeset(Map.merge(%Data.User{}, user), %{battletag: Map.get(params, "battletag")})
-    cs
+    changeset(Map.merge(%Data.User{}, user), %{battletag: Map.get(params, "battletag")})
     |> Repo.update
-    |> process_insert_or_update
+    |> Data.Util.process_insert_or_update
+    |> filter_values
   end
 
-  defp process_insert_or_update({:error, changeset}), do: {:error, map_changeset(changeset)}
-  defp process_insert_or_update({:ok, user}) do
-    {:ok, Map.take(user, [:id, :battle_net_id, :battletag])} # only grab the fields we need
-  end
-
-  defp map_changeset(changeset) do
-    Enum.map(changeset.errors, fn {key, val} ->
-      %{key => elem(val, 0)}
-    end)
-  end
+  # take certain values after insertion
+  defp filter_values({:error, error}), do: {:error, error}
+  defp filter_values({:ok, user}), do: {:ok, Map.take(user, [:id, :battle_net_id, :battletag])}
 
 end
