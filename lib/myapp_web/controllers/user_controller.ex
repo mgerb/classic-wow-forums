@@ -3,9 +3,7 @@ defmodule MyAppWeb.UserController do
   alias MyAppWeb.Response
 
   @spec index(map, map) :: any
-  def index(conn, params) do
-    IO.inspect(conn)
-    IO.inspect(params)
+  def index(conn, _params) do
     conn
     |> Response.json("Auth works!")
   end

@@ -27,3 +27,11 @@ config :logger, :console,
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
 import_config "config.secret.exs"
+
+# user permissions for app - right now the read/write don't mean anything
+config :myapp, MyApp.Guardian,
+  permissions: %{
+    user: [:read, :write],
+    mod: [:read, :write],
+    admin: [:read, :write],
+  }

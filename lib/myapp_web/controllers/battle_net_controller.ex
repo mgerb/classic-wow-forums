@@ -3,7 +3,7 @@ defmodule MyAppWeb.BattleNetController do
   alias MyAppWeb.Response
   alias MyApp.BattleNet
   alias MyApp.Data
-  alias MyApp.JWT
+  alias MyApp.Guardian.Auth
 
   # https://us.battle.net/oauth/authorize?redirect_uri=https://localhost/api/battlenet/authorize&scope=wow.profile&client_id=vxqv32fddxsy6cmk6259amtymbuzmfrq&response_type=code
 
@@ -14,7 +14,7 @@ defmodule MyAppWeb.BattleNetController do
       |> BattleNet.Auth.get_access_token
       |> BattleNet.User.get_user
       |> Data.User.upsert_user
-      |> JWT.add_jwt
+      |> Auth.Token.add_token_and_map_claims
       |> Response.put_resp
 
     conn

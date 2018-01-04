@@ -1,6 +1,5 @@
 defmodule MyApp.Data.Thread do
   use Ecto.Schema
-  import Ecto.Query
   import Ecto.Changeset
   alias MyApp.Repo
   alias MyApp.Data
@@ -16,33 +15,48 @@ defmodule MyApp.Data.Thread do
     field :sticky, :boolean, default: false
     field :locked, :boolean, default: false
     field :edited, :boolean, default: false
-
     timestamps()
   end
 
-  def changeset(thread, params \\ %{}) do
+  def insert_changeset(thread, params \\ %{}) do
     thread
-    |> cast(params, [:id, :title, :category_id, :content, :user_id, :view_count, :last_reply_id, :sticky, :locked, :edited])
+    |> cast(params, [:title, :category_id, :content, :user_id])
     |> validate_required([:title, :category_id, :content, :user_id])
     |> foreign_key_constraint(:category_id)
+    |> foreign_key_constraint(:user_id)
+  end
+
+  def update_changeset(thread, params \\ %{}) do
+    thread
+    |> cast(params, [:content, :user_id, :sticky, :locked])
+    |> force_change(:edited, true) # set edited flag on update
+    |> validate_required([:content, :user_id])
+    |> foreign_key_constraint(:category_id)
+    |> foreign_key_constraint(:user_id)
   end
 
   def insert_thread(params) do
-    changeset(%Data.Thread{}, params)
+    insert_changeset(%Data.Thread{}, params)
     |> Repo.insert
     |> Data.Util.process_insert_or_update
   end
 
   def update_thread(params) do
-    Repo.get(Data.Thread, Map.get(params, "id"))
-    |> process_update(params)
+    id = Map.get(params, "id")
+    if id == nil do
+      {:error, "Invalid thread"}
+    else
+      Repo.get(Data.Thread, id)
+      |> process_update(params)
+    end
   end
+
+  # TODO: delete thread
 
   # TODO: check user permissions for sticky/locked
   defp process_update(thread, _params) when is_nil(thread), do: {:error, "Invalid thread"}
   defp process_update(thread, params) when not is_nil(thread) do
-    changeset(thread, Map.take(params, ["content", "edited", "sticky", "locked"]))
-    |> IO.inspect
+    update_changeset(thread, params)
     |> Repo.update
     |> Data.Util.process_insert_or_update
   end
