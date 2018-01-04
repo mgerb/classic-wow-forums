@@ -5,6 +5,7 @@ defmodule MyApp.Repo.Migrations.CreateUser do
     create table(:user) do
       add :battle_net_id, :integer
       add :battletag, :string
+      add :permissions, :string
 
       timestamps()
     end

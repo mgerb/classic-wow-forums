@@ -9,6 +9,7 @@ defmodule MyApp.Data.User do
   schema "user" do
     field :battle_net_id, :integer
     field :battletag, :string
+    field :permissions, :string, default: "user" # admin, mod, user
 
     timestamps()
   end
@@ -24,7 +25,7 @@ defmodule MyApp.Data.User do
   defp get_user(battle_net_id) do
     query = from u in "user",
       where: u.battle_net_id == ^battle_net_id,
-      select: [:id, :battle_net_id, :battletag]
+      select: [:id, :permissions, :battle_net_id, :battletag]
     Repo.one(query)
   end
 
@@ -70,6 +71,6 @@ defmodule MyApp.Data.User do
 
   # take certain values after insertion
   defp filter_values({:error, error}), do: {:error, error}
-  defp filter_values({:ok, user}), do: {:ok, Map.take(user, [:id, :battle_net_id, :battletag])}
+  defp filter_values({:ok, user}), do: {:ok, Map.take(user, [:id, :permissions, :battle_net_id, :battletag])}
 
 end
