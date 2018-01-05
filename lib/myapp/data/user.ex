@@ -13,7 +13,7 @@ defmodule MyApp.Data.User do
     timestamps()
   end
 
-  def changeset(user, params \\ %{}) do
+  defp changeset(user, params \\ %{}) do
     user
     |> cast(params, [:battle_net_id, :battletag])
     |> validate_required([:battle_net_id, :battletag])
@@ -29,19 +29,23 @@ defmodule MyApp.Data.User do
   end
 
   # insert user info in database - if not exists - update battletag if it has changed
-  @spec upsert_user(%{"battle_net_id": integer, "battletag": String.t} | tuple) :: {:ok, map} | {:error, any}
+  @spec upsert_user(%{"battle_net_id": integer, "battletag": String.t, "access_token": String.t} | tuple) :: {:ok, map} | {:error, any}
   def upsert_user(params) when is_map(params) do
     # check for current user in database
-    case get_user(Map.get(params, "battle_net_id")) do  
-      nil -> insert_user(params)
-      user ->
-        # update user if battletag has changed
+    user = get_user(Map.get(params, "battle_net_id"))
+
+    output = cond do
+      is_nil(user) ->
+        insert_user(params)
+      true ->
         if Map.get(user, :battletag) != Map.get(params, "battletag") do
           update_battletag(user, params)
         else
           {:ok, user}
         end
     end
+
+    output
     |> add_access_token(Map.get(params, "access_token"))
   end
   def upsert_user({:ok, params}), do: upsert_user(params)
