@@ -46,6 +46,7 @@ defmodule MyAppWeb.Router do
       # authenticated routes
       pipe_through [:user_auth]
       post "/", ReplyController, :insert
+      put "/", ReplyController, :update
     end
 
     scope "/category" do

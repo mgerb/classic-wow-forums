@@ -1,6 +1,5 @@
 defmodule MyApp.Data.Reply do
   use Ecto.Schema
-  import Ecto.Query
   import Ecto.Changeset
   alias MyApp.Repo
   alias MyApp.Data
@@ -15,17 +14,46 @@ defmodule MyApp.Data.Reply do
     timestamps()
   end
 
-  def changeset(reply, params \\ %{}) do
+  defp insert_changeset(reply, params \\ %{}) do
     reply
-    |> cast(params, [:user_id, :thread_id, :content, :edited, :quote])
+    |> cast(params, [:user_id, :thread_id, :content, :quote])
     |> validate_required([:user_id, :thread_id, :content])
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:thread_id)
   end
 
+  # allow user to update reply
+  defp user_update_changeset(reply, params \\ %{}) do
+    reply
+    |> cast(params, [:content])
+    |> force_change(:edited, true) # set edited flag on update
+    |> validate_required([:content])
+  end
+
+  @spec insert_reply(map) :: {:ok, map} | {:error, map}
   def insert_reply(params) do
-    changeset(%Data.Reply{}, params)
+    insert_changeset(%Data.Reply{}, params)
     |> Repo.insert
+    |> Data.Util.process_insert_or_update
+  end
+
+  @spec user_update_reply(map) :: {:ok, map} | {:error, map}
+  def user_update_reply(params) do
+    id = Map.get(params, "id")
+    user_id = Map.get(params, "user_id")
+
+    if is_nil(id) || is_nil(user_id) do
+      {:error, "Invalid reply"}
+    else
+      Repo.get_by(Data.Reply, %{id: id, user_id: user_id})
+      |> process_user_update(params)
+    end
+  end
+
+  defp process_user_update(reply, _params) when is_nil(reply), do: {:error, "Invalid reply"}
+  defp process_user_update(reply, params) when not is_nil(reply) do
+    user_update_changeset(reply, params)
+    |> Repo.update
     |> Data.Util.process_insert_or_update
   end
 

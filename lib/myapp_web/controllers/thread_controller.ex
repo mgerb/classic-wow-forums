@@ -27,7 +27,7 @@ defmodule MyAppWeb.ThreadController do
 
     {output, status} = params
       |> Map.put("user_id",  user_id)
-      |> Data.Thread.update_thread
+      |> Data.Thread.user_update_thread
       |> Response.put_resp
 
     conn

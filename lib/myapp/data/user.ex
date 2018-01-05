@@ -10,7 +10,6 @@ defmodule MyApp.Data.User do
     field :battle_net_id, :integer
     field :battletag, :string
     field :permissions, :string, default: "user" # admin, mod, user
-
     timestamps()
   end
 

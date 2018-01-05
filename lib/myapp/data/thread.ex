@@ -18,7 +18,7 @@ defmodule MyApp.Data.Thread do
     timestamps()
   end
 
-  def insert_changeset(thread, params \\ %{}) do
+  defp insert_changeset(thread, params \\ %{}) do
     thread
     |> cast(params, [:title, :category_id, :content, :user_id])
     |> validate_required([:title, :category_id, :content, :user_id])
@@ -26,13 +26,18 @@ defmodule MyApp.Data.Thread do
     |> foreign_key_constraint(:user_id)
   end
 
-  def update_changeset(thread, params \\ %{}) do
+  # TODO: allow mods to set sticky/locked on threads
+  defp mod_update_changeset(thread, params \\ %{}) do
     thread
-    |> cast(params, [:content, :user_id, :sticky, :locked])
+    |> cast(params, [:sticky, :locked])
+  end
+
+  # allow user to update content of their own thread
+  defp user_update_changeset(thread, params \\ %{}) do
+    thread
+    |> cast(params, [:content])
     |> force_change(:edited, true) # set edited flag on update
-    |> validate_required([:content, :user_id])
-    |> foreign_key_constraint(:category_id)
-    |> foreign_key_constraint(:user_id)
+    |> validate_required([:content])
   end
 
   def insert_thread(params) do
@@ -41,22 +46,24 @@ defmodule MyApp.Data.Thread do
     |> Data.Util.process_insert_or_update
   end
 
-  def update_thread(params) do
+  @spec user_update_thread(map) :: {:ok, map} | {:error, map}
+  def user_update_thread(params) do
     id = Map.get(params, "id")
-    if id == nil do
+    user_id = Map.get(params, "user_id")
+
+    if is_nil(id) || is_nil(user_id) do
       {:error, "Invalid thread"}
     else
-      Repo.get(Data.Thread, id)
-      |> process_update(params)
+      Repo.get_by(Data.Thread, %{id: id, user_id: user_id})
+      |> process_user_update(params)
     end
   end
 
   # TODO: delete thread
 
-  # TODO: check user permissions for sticky/locked
-  defp process_update(thread, _params) when is_nil(thread), do: {:error, "Invalid thread"}
-  defp process_update(thread, params) when not is_nil(thread) do
-    update_changeset(thread, params)
+  defp process_user_update(thread, _params) when is_nil(thread), do: {:error, "Invalid thread"}
+  defp process_user_update(thread, params) when not is_nil(thread) do
+    user_update_changeset(thread, params)
     |> Repo.update
     |> Data.Util.process_insert_or_update
   end
