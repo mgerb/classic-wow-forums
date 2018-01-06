@@ -14,6 +14,9 @@ defmodule MyApp.Application do
       supervisor(MyAppWeb.Endpoint, []),
       # Start your own worker by calling: MyApp.Worker.start_link(arg1, arg2, arg3)
       # worker(MyApp.Worker, [arg1, arg2, arg3]),
+
+      # start cachex for key/value store
+      worker(Cachex, [:myapp, []])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

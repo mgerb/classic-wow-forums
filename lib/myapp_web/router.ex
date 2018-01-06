@@ -54,4 +54,9 @@ defmodule MyAppWeb.Router do
     end
   end
   
+  # catch all for serving single page web app
+  scope "/*all", MyAppWeb do
+    get "/", PageController, :index
+  end
+
 end

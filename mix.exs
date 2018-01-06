@@ -46,6 +46,7 @@ defmodule MyApp.Mixfile do
       {:httpoison, "~> 0.13"},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:ex_guard, "~> 1.3", only: :dev},
+      {:cachex, "~> 2.1"},
     ]
   end
 

@@ -1,6 +1,5 @@
 defmodule MyAppWeb.ThreadControllerTest do
   use MyAppWeb.ConnCase, async: true
-  import MyAppWeb.ThreadController
   import MyApp.Data.TestHelpers
 
   test "insert new thread should fail" do
