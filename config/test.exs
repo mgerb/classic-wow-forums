@@ -16,4 +16,9 @@ config :myapp, MyApp.Repo,
   password: "postgres",
   database: "myapp_test",
   hostname: "localhost",
+  template: "template0",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :myapp, MyApp.Guardian,
+      issuer: "myapp",
+      secret_key: "secret"

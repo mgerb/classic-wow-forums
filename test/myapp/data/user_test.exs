@@ -5,13 +5,12 @@ defmodule MyApp.Data.UserTest do
 
   test "user is inserted into database" do
     {:ok, user} = new_user()
-    assert user == %{
-      access_token: "test_token",
-      battle_net_id: 1,
-      battletag: "mgerb42",
-      id: user.id,
-      permissions: "user",
-    }
+    assert user.access_token ==  "test_token"
+    assert user.battle_net_id == 1
+    assert user.battletag == "mgerb42"
+    assert user.id == user.id
+    assert user.permissions == "user"
+    assert user.token =~ ~r/(?).(?).(?)/
   end
 
   test "user's battletag is updated" do

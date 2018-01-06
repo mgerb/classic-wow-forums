@@ -1,5 +1,5 @@
 defmodule MyApp.Guardian.Auth.Pipeline.User do
-  use Guardian.Plug.Pipeline, otp_app: :MyApp,
+  use Guardian.Plug.Pipeline, otp_app: :myapp,
                               module: MyApp.Guardian,
                               error_handler: MyApp.Auth.ErrorHandler
 
@@ -14,7 +14,7 @@ defmodule MyApp.Guardian.Auth.Pipeline.User do
 end
 
 defmodule MyApp.Guardian.Auth.Pipeline.Mod do
-  use Guardian.Plug.Pipeline, otp_app: :MyApp,
+  use Guardian.Plug.Pipeline, otp_app: :myapp,
                               module: MyApp.Guardian,
                               error_handler: MyApp.Auth.ErrorHandler
 
@@ -28,7 +28,7 @@ defmodule MyApp.Guardian.Auth.Pipeline.Mod do
 end
 
 defmodule MyApp.Guardian.Auth.Pipeline.Admin do
-  use Guardian.Plug.Pipeline, otp_app: :MyApp,
+  use Guardian.Plug.Pipeline, otp_app: :myapp,
                               module: MyApp.Guardian,
                               error_handler: MyApp.Auth.ErrorHandler
 
