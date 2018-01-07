@@ -44,10 +44,14 @@ hr {
 
 .flex {
   display: flex;
-}
 
-.flex--center {
-  align-items: center;
+  &--center {
+    align-items: center;
+  }
+
+  &--wrap {
+    flex-wrap: wrap;
+  }
 }
 
 span.grey {
