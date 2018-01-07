@@ -1,0 +1,103 @@
+@import '../../scss/mixins';
+$topbg_height: 100px;
+
+.wowlogo2 {
+  position: absolute;
+  top: 8;
+  width: 100%;
+  text-align: center;
+  z-index: 1;
+
+  @include breakpoint(smallOrLess) {
+    img {
+      height: 80px;
+    }
+  }
+}
+
+.gold-bg {
+  height: 29px;
+  background-image: url('../../assets/gold-bg.gif');
+  background-repeat: repeat-x;
+}
+
+.topbg {
+  margin-top: -29px;
+  width: 50%;
+  height: $topbg_height;
+  background-repeat: repeat-x;
+  display: inline-block;
+  position: relative;
+
+  &__left {
+    background-image: url('../../assets/topbg-left.gif');
+  }
+
+  &__right {
+    background-image: url('../../assets/topbg-right.gif');
+  }
+}
+
+.gryph {
+  background-repeat: no-repeat;
+  position: absolute;
+  height: 100%;
+  width: 68px;;
+  top: 0;
+
+  &__left {
+    left: 0;
+    background-image: url('../../assets/gryph-left.gif');
+  }
+
+  &__right {
+    right: 0;
+    background-image: url('../../assets/gryph-right.gif');
+  }
+}
+
+.gold-border {
+  height: 19px;
+  background-image: url('../../assets/gold-border.gif');
+  display: flex;
+  justify-content: space-between;
+}
+
+.finger {
+  width: 97px;
+  height: 19px;
+
+  &__left {
+    background-image: url('../../assets/left-finger.gif');
+    background-repeat: no-repeat;
+  }
+
+  &__right {
+    background-image: url('../../assets/right-finger.gif');
+    background-repeat: no-repeat;
+  }
+}
+
+.linksbar {
+  height: 53px;
+  background-image: url('../../assets/linksbar-bg.gif');
+  background-repeat: repeat-x;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.linksbar-image {
+  height: 53px;
+  width: 106px;
+
+  &__left {
+    background-image: url('../../assets/linksbar-left.gif');
+    background-repeat: no-repeat;
+  }
+
+  &__right {
+    background-image: url('../../assets/linksbar-right.gif');
+    background-repeat: no-repeat;
+  }
+}

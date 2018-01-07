@@ -5,8 +5,13 @@ defmodule MyAppWeb.PageController do
   @spec index(map, map) :: any
   def index(conn, _params) do
 
-    file = Cachex.get(:myapp, "index.html")
-    |> get_file
+    # cache index.html if prod
+    file = case Mix.env do
+      :dev -> File.read!("./priv/static/index.html")
+      _ -> 
+        file = Cachex.get(:myapp, "index.html")
+        |> get_file
+    end
 
     conn
     |> html(file)

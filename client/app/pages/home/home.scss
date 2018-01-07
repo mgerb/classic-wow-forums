@@ -1,0 +1,62 @@
+@import '../../scss/mixins';
+
+.topic-container {
+  max-width: 650px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.topic-row {
+  display: flex;
+
+  @include breakpoint(smallOrLess) {
+    flex-wrap: wrap;
+  }
+
+  &__classes {
+    flex-wrap: wrap;
+  }
+}
+
+.topic-item {
+  display: flex;
+  padding-left: 10px;
+  padding-right: 10px;
+  flex: 1;
+  margin-top: 30px;
+
+  @include breakpoint(smallOrLess) {
+    padding: 0;
+    flex: initial;
+  }
+
+  &__classes {
+    flex: 1;
+    display: block;
+    padding-right: 0;
+    margin-top: 0;
+  }
+}
+
+.classes-container {
+  margin-left: 15;
+  
+  @include breakpoint(smallOrLess) {
+    margin: 0;
+  }
+}
+
+.item-row {
+  display: flex;
+  margin-top: 30px;
+
+  &__class {
+    margin-top: 15px;
+  }
+}
+
+.topic-item-icon {
+  padding-right: 5px;
+  height: 35;
+  width: auto;
+}

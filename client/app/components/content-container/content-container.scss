@@ -1,0 +1,75 @@
+.content-container {
+  position: relative;
+  max-width: 766px;
+  padding: 20px 40px 100px;
+  margin: 0 auto 50px auto;
+}
+
+.border-container {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.border {
+  height: 100%;
+  width: 135px;
+  position: absolute;
+
+  &__top {
+    background-image: url('../../assets/border-top.gif');
+    background-repeat: repeat-x;
+    width: 100%;
+  }
+
+  &__top-left {
+    background-image: url('../../assets/border-top-left.gif');
+    background-repeat: no-repeat;
+  }
+
+  &__top-right {
+    background-image: url('../../assets/border-top-right.gif');
+    background-repeat: no-repeat;
+    right: 0;
+  }
+
+  &__left {
+    background-image: url('../../assets/border-left.gif');
+    background-repeat: repeat-y;
+  }
+
+  &__right {
+    background-image: url('../../assets/border-right.gif');
+    background-repeat: repeat-y;
+    right: 0;
+  }
+
+  &__bottom {
+    background-image: url('../../assets/border-bot.gif');
+    background-repeat: repeat-x;
+    bottom: 0;
+    height: 62px;
+    width: 100%;
+  }
+
+  &__bottom-left {
+    background-image: url('../../assets/border-bot-left.gif');
+    background-repeat: no-repeat;
+    bottom: 0;
+    height: 192px;
+    width: 100%;
+  }
+
+  &__bottom-right {
+    background-image: url('../../assets/border-bot-right.gif');
+    background-repeat: no-repeat;
+    bottom: 0;
+    right: 0;
+    height: 192px;
+  }
+
+}

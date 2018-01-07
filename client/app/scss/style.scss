@@ -1,0 +1,57 @@
+html {
+  font-family: Arial,Helvetica,Sans-Serif;
+  font-size: 10pt;
+  color: #cccccc;
+}
+
+b {
+  color: #ffffff;
+}
+
+body {
+  background-color: black;
+  background-image: url('../assets/forum-bg.jpg');
+  background-repeat: repeat-x;
+}
+
+a {
+  color: #FFB019;
+  font-weight: bold;
+  font-size: 9pt;
+
+  &:hover {
+    color: white;
+  }
+
+  &:visited {
+    color: #B1B1B1;
+  }
+}
+
+hr {
+  background: rgb(71, 71, 71);
+  width: 80%;
+  height: 0.5px;
+  border: 0;
+  margin: 25px auto;
+  display: block;
+  clear: both;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex--center {
+  align-items: center;
+}
+
+span.grey {
+  font-family: Arial,Helvetica,Sans-Serif;
+  color: #A0A1A3;
+  font-size: 9pt;
+}
