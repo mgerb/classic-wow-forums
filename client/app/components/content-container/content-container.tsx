@@ -2,7 +2,9 @@ import React from 'react';
 
 import './content-container.scss';
 
-interface Props {}
+interface Props {
+  className?: string;
+}
 
 interface State {}
 
@@ -13,7 +15,7 @@ export class ContentContainer extends React.Component<Props, State> {
 
   render() {
     return (
-      <div className="content-container">
+      <div className={`content-container ${this.props.className}`}>
         <div className="border-container">
           <div className="border border__left"/>
           <div className="border border__right"/>

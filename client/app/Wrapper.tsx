@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import { Footer, Header } from './components';
-import { Home, Realms } from './pages';
+import { Forum, Home, NotFound, Oauth, Realms } from './pages';
 
 // styling
 import './scss/index.scss';
@@ -16,6 +16,14 @@ export default class Wrapper extends React.Component<Props, State> {
     super(props);
   }
 
+  componentDidMount() {
+    const storedAccount = localStorage.getItem('account');
+
+    if (storedAccount) {
+      console.log(JSON.parse(storedAccount));
+    }
+  }
+
   public render() {
     return (
       <BrowserRouter>
@@ -24,7 +32,9 @@ export default class Wrapper extends React.Component<Props, State> {
           <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/realms" component={Realms} />
-            {/* <Route component={NotFound} /> */}
+            <Route exact path="/f/:id" component={Forum} />
+            <Route exact path="/oauth" component={Oauth} />
+            <Route component={NotFound} />
           </Switch>
           <Footer />
         </div>

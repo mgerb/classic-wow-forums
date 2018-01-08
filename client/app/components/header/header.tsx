@@ -10,9 +10,6 @@ interface Props {}
 interface State {}
 
 export class Header extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
 
   render() {
     return (

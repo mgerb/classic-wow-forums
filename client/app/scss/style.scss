@@ -18,6 +18,8 @@ a {
   color: #FFB019;
   font-weight: bold;
   font-size: 9pt;
+  text-decoration: underline;
+  cursor: pointer;
 
   &:hover {
     color: white;
@@ -54,8 +56,16 @@ hr {
   }
 }
 
+.flex-1 {
+  flex: 1;
+}
+
 span.grey {
   font-family: Arial,Helvetica,Sans-Serif;
   color: #A0A1A3;
   font-size: 9pt;
+}
+
+.text-center {
+  text-align: center;
 }

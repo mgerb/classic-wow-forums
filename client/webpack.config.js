@@ -13,6 +13,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../priv/static'),
     filename: '[name].[hash].js',
+    publicPath: "/",
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
@@ -73,5 +74,10 @@ module.exports = {
     }),
     new webpack.HotModuleReplacementPlugin(),
     new FaciconsWebpackPlugin('./favicon.png'),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+      },
+    })
   ],
 };

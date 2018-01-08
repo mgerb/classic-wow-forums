@@ -23,7 +23,7 @@ defmodule MyAppWeb.Router do
     pipe_through [:api]
 
     scope "/battlenet" do
-      get "/authorize", BattleNetController, :authorize
+      post "/authorize", BattleNetController, :authorize
 
       pipe_through [:user_auth]
       get "/characters", BattleNetController, :characters

@@ -1,5 +1,5 @@
 import React from 'react';
-import { filter } from 'lodash';
+import { chain } from 'lodash';
 import { Link } from 'react-router-dom';
 import axios from '../../axios/axios';
 import { ContentContainer } from '../../components';
@@ -30,7 +30,10 @@ export class Realms extends React.Component<Props, State> {
   async componentDidMount() {
     try {
       const res = await axios.get('/api/category');
-      const realms = filter(res.data.data, { category: 'realm' });
+      const realms = chain(res.data.data)
+        .filter({ category: 'realm' })
+        .orderBy(['title'])
+        .value();
       this.setState({ realms });
     } catch (e) {
       console.error(e);
@@ -41,7 +44,7 @@ export class Realms extends React.Component<Props, State> {
     return realms.map((realm) => {
       return (
         <li key={realm.id}>
-          <Link to={`/f/realm/${realm.id}`}>{realm.title}</Link>
+          <Link to={`/f/${realm.id}`}>{realm.title}</Link>
         </li>
       );
     });
