@@ -1,6 +1,7 @@
 defmodule MyApp.Data.Thread do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   alias MyApp.Repo
   alias MyApp.Data
 
@@ -15,6 +16,9 @@ defmodule MyApp.Data.Thread do
     field :sticky, :boolean, default: false
     field :locked, :boolean, default: false
     field :edited, :boolean, default: false
+    has_many :replies, Data.Reply
+    has_one :user, Data.User, foreign_key: :id, references: :user_id
+    has_one :last_reply, Data.User, foreign_key: :id, references: :last_reply_id
     timestamps()
   end
 
@@ -40,14 +44,56 @@ defmodule MyApp.Data.Thread do
     |> validate_required([:content])
   end
 
-  def insert_thread(params) do
+  def get(thread_id) do
+    query = from t in Data.Thread,
+      where: t.id == ^thread_id,
+      preload: [:user, :last_reply, :replies]
+
+    Repo.one(query)
+    |> process_get
+  end
+
+  def get_collection(category_id) do
+    query = from t in Data.Thread,
+      select: map(t, [
+        :id,
+        :user_id,
+        :updated_at,
+        :inserted_at,
+        :sticky,
+        :locked,
+        :last_reply_id,
+        :edited,
+        :content,
+        :category_id,
+        user: [:id, :battletag],
+        last_reply: [:id, :battletag],
+      ]),
+      where: [category_id: ^category_id],
+      preload: [:user, :last_reply]
+
+    if category_id != nil do
+      Repo.all(query)
+      |> process_get
+    else
+      {:error, "category_id required"}
+    end
+  end
+
+  defp process_get(data) when is_nil(data), do: {:error, "Not found"}
+  defp process_get(data) when not is_nil(data), do: {:ok, data}
+
+  @spec insert(map) :: {:ok, map} | {:error, map}
+  def insert(params) do
     insert_changeset(%Data.Thread{}, params)
     |> Repo.insert
+    |> remove_associations
     |> Data.Util.process_insert_or_update
   end
 
-  @spec user_update_thread(map) :: {:ok, map} | {:error, map}
-  def user_update_thread(params) do
+  # update thread for user permission
+  @spec user_update(map) :: {:ok, map} | {:error, map}
+  def user_update(params) do
     id = Map.get(params, "id")
     user_id = Map.get(params, "user_id")
 
@@ -65,7 +111,10 @@ defmodule MyApp.Data.Thread do
   defp process_user_update(thread, params) when not is_nil(thread) do
     user_update_changeset(thread, params)
     |> Repo.update
+    |> remove_associations
     |> Data.Util.process_insert_or_update
   end
+
+  defp remove_associations({err, data}), do: {err, Map.drop(data, [:user, :replies, :last_reply])}
 
 end

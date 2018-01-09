@@ -36,6 +36,9 @@ defmodule MyAppWeb.Router do
     end
 
     scope "/thread" do
+      get "/", ThreadController, :get_collection
+      get "/:id", ThreadController, :get
+
       # authenticated routes
       pipe_through [:user_auth]
       post "/", ThreadController, :insert

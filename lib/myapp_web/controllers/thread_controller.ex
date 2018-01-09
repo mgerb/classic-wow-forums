@@ -11,7 +11,7 @@ defmodule MyAppWeb.ThreadController do
 
     {output, status} = params
       |> Map.put("user_id",  user_id)
-      |> Data.Thread.insert_thread
+      |> Data.Thread.insert
       |> Response.put_resp
 
     conn
@@ -27,7 +27,7 @@ defmodule MyAppWeb.ThreadController do
 
     {output, status} = params
       |> Map.put("user_id",  user_id)
-      |> Data.Thread.user_update_thread
+      |> Data.Thread.user_update
       |> Response.put_resp
 
     conn
@@ -35,4 +35,28 @@ defmodule MyAppWeb.ThreadController do
     |> Response.json(output)
   end
   
+  @spec get_collection(map, map) :: any
+  def get_collection(conn, params) do
+
+    {output, status} = params["category_id"]
+      |> Data.Thread.get_collection
+      |> Response.put_resp
+
+    conn
+    |> put_status(status)
+    |> Response.json(output)
+  end
+
+  @spec get(map, map) :: any
+  def get(conn, params) do
+
+    {output, status} = params["id"]
+      |> Data.Thread.get
+      |> Response.put_resp
+
+    conn
+    |> put_status(status)
+    |> Response.json(output)
+  end
+
 end

@@ -11,7 +11,7 @@ defmodule MyAppWeb.ReplyController do
 
     {output, status} = params
       |> Map.put("user_id",  user_id)
-      |> Data.Reply.insert_reply
+      |> Data.Reply.insert
       |> Response.put_resp
 
     conn
@@ -27,7 +27,7 @@ defmodule MyAppWeb.ReplyController do
 
     {output, status} = params
       |> Map.put("user_id",  user_id)
-      |> Data.Reply.user_update_reply
+      |> Data.Reply.user_update
       |> Response.put_resp
 
     conn

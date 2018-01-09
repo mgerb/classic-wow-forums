@@ -30,15 +30,15 @@ defmodule MyApp.Data.Reply do
     |> validate_required([:content])
   end
 
-  @spec insert_reply(map) :: {:ok, map} | {:error, map}
-  def insert_reply(params) do
+  @spec insert(map) :: {:ok, map} | {:error, map}
+  def insert(params) do
     insert_changeset(%Data.Reply{}, params)
     |> Repo.insert
     |> Data.Util.process_insert_or_update
   end
 
-  @spec user_update_reply(map) :: {:ok, map} | {:error, map}
-  def user_update_reply(params) do
+  @spec user_update(map) :: {:ok, map} | {:error, map}
+  def user_update(params) do
     id = Map.get(params, "id")
     user_id = Map.get(params, "user_id")
 
