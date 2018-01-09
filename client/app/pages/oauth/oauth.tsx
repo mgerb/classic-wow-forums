@@ -1,7 +1,7 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { parse } from 'query-string';
-import axios from '../../axios/axios';
+import { UserService } from '../../services';
 
 interface Props extends RouteComponentProps<any> {}
 
@@ -15,9 +15,7 @@ export class Oauth extends React.Component<Props, State> {
   private async login(queryString: string) {
     try {
       const code = parse(queryString).code;
-      const res = await axios.post('/api/battlenet/authorize', { code });
-      const account = res.data.data;
-      localStorage.setItem('account', JSON.stringify(account));
+      await UserService.authorize(code);
       window.opener.location.reload();
       // TODO: this doesn't work on mobile currently
       window.close();

@@ -18,8 +18,6 @@ export class LoginButton extends React.Component<Props, State> {
   }
 
   render() {
-    console.log(process.env);
-
     return (
       <div {...this.props}>
         <img src={require('../../assets/login-bot-left.gif')} />

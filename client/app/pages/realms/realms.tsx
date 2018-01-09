@@ -1,25 +1,21 @@
 import React from 'react';
 import { chain } from 'lodash';
-import { Link } from 'react-router-dom';
-import axios from '../../axios/axios';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { CategoryService } from '../../services';
+import { CategoryModel } from '../../model';
 import { ContentContainer } from '../../components';
 import './realms.scss';
 import header_realmforums from '../../assets/header-realmforums.gif';
 import realms_large from '../../assets/realms-large.gif';
 
-interface Props {}
+interface Props extends RouteComponentProps<any> {}
 
 interface State {
-  realms: Realm[];
-}
-
-interface Realm {
-  id: number;
-  category: string;
-  title: string;
+  realms: CategoryModel[];
 }
 
 export class Realms extends React.Component<Props, State> {
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -29,8 +25,8 @@ export class Realms extends React.Component<Props, State> {
 
   async componentDidMount() {
     try {
-      const res = await axios.get('/api/category');
-      const realms = chain(res.data.data)
+      const res = await CategoryService.getCategories();
+      const realms = chain(res)
         .filter({ category: 'realm' })
         .orderBy(['title'])
         .value();
@@ -40,7 +36,7 @@ export class Realms extends React.Component<Props, State> {
     }
   }
 
-  private renderRealms(realms: Realm[]): any {
+  private renderRealms(realms: CategoryModel[]): any {
     return realms.map((realm) => {
       return (
         <li key={realm.id}>

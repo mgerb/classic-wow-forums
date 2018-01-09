@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Wrapper from './Wrapper';
+import { Routes } from './routes';
 import 'babel-polyfill';
 
-ReactDOM.render(<Wrapper />, document.getElementById('app'));
+ReactDOM.render(<Routes/>, document.getElementById('app'));
