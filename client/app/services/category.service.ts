@@ -12,7 +12,7 @@ const getCategories = async () => {
   const res = await axios.get('/api/category');
   categoryCache = cloneDeep(res.data.data);
   return res.data.data;
-}
+};
 
 export const CategoryService = {
   getCategories,
