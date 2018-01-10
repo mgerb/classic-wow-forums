@@ -28,16 +28,28 @@ defmodule MyApp.BattleNet.User do
     end
   end
 
-  @spec get_user_characters(String.t) :: {:ok, map} | {:error, any}
-  def get_user_characters(access_token) do
-    access_token
-    |> resource_url("wow/user/characters")
-    |> HTTPoison.get
-    |> parse_character_response
+  # end point is cached for one minute per user
+  @spec get_user_characters(integer, String.t) :: {:ok, map} | {:error, any}
+  def get_user_characters(user_id, access_token) do
+    case Cachex.get(:myapp, "usr_char:#{user_id}") do
+      {:ok, data} -> {:ok, data}
+      {:missing, _} -> 
+        access_token
+        |> resource_url("wow/user/characters")
+        |> HTTPoison.get
+        |> parse_character_response(user_id)
+    end
   end
 
-  defp parse_character_response({:error, error}), do: {:error, error}
-  defp parse_character_response({:ok, %HTTPoison.Response{body: body}}), do: Poison.decode(body)
+  defp parse_character_response({:error, error}, _), do: {:error, error}
+  defp parse_character_response({:ok, %HTTPoison.Response{body: body}}, user_id) do
+    case Poison.decode(body) do
+      {:ok, data} ->
+        Cachex.set(:myapp, "usr_char:#{user_id}", data, ttl: :timer.minutes(1)) # 1 minute
+        {:ok, data}
+      {:error, error} -> {:error, error}
+    end
+  end
 
   defp resource_url(access_token, path) do
     "#{api_url()}/#{path}?access_token=#{access_token}"

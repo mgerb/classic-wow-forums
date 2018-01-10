@@ -24,12 +24,12 @@ defmodule MyAppWeb.BattleNetController do
 
   # TODO: cache this end point
   def characters(conn, _params) do
-    token = conn
+    %{"access_token" => token, "id" => user_id} = conn
     |> MyApp.Guardian.Plug.current_claims
-    |> Map.get("access_token")
+    |> Map.take(["access_token", "id"])
     
-    {output, status} = token
-    |> BattleNet.User.get_user_characters
+    {output, status} = user_id
+    |> BattleNet.User.get_user_characters(token)
     |> Response.put_resp
 
     conn

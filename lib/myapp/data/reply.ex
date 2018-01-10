@@ -1,6 +1,7 @@
 defmodule MyApp.Data.Reply do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   alias MyApp.Repo
   alias MyApp.Data
 
@@ -35,6 +36,20 @@ defmodule MyApp.Data.Reply do
     insert_changeset(%Data.Reply{}, params)
     |> Repo.insert
     |> Data.Util.process_insert_or_update
+    |> update_thread_new_reply
+  end
+
+  defp update_thread_new_reply({:error, error}), do: {:error, error}
+  defp update_thread_new_reply({:ok, reply}) do
+    thread_id = Map.get(reply, :thread_id)
+    user_id = Map.get(reply, :user_id)
+    query = from t in Data.Thread, where: t.id == ^thread_id,
+      update: [set: [last_reply_id: ^user_id], inc: [reply_count: 1]]
+
+    case Repo.update_all(query, []) do
+      nil -> {:error, "update thread error"}
+      _ -> {:ok, reply}
+    end
   end
 
   @spec user_update(map) :: {:ok, map} | {:error, map}

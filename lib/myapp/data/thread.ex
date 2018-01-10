@@ -16,6 +16,7 @@ defmodule MyApp.Data.Thread do
     field :sticky, :boolean, default: false
     field :locked, :boolean, default: false
     field :edited, :boolean, default: false
+    field :reply_count, :integer, default: 0
     has_many :replies, Data.Reply
     has_one :user, Data.User, foreign_key: :id, references: :user_id
     has_one :last_reply, Data.User, foreign_key: :id, references: :last_reply_id
@@ -24,7 +25,7 @@ defmodule MyApp.Data.Thread do
 
   defp insert_changeset(thread, params \\ %{}) do
     thread
-    |> cast(params, [:title, :category_id, :content, :user_id])
+    |> cast(params, [:title, :category_id, :content, :user_id, :last_reply_id])
     |> validate_required([:title, :category_id, :content, :user_id])
     |> foreign_key_constraint(:category_id)
     |> foreign_key_constraint(:user_id)
@@ -66,6 +67,9 @@ defmodule MyApp.Data.Thread do
         :edited,
         :content,
         :category_id,
+        :title,
+        :view_count,
+        :reply_count,
         user: [:id, :battletag],
         last_reply: [:id, :battletag],
       ]),
@@ -85,6 +89,7 @@ defmodule MyApp.Data.Thread do
 
   @spec insert(map) :: {:ok, map} | {:error, map}
   def insert(params) do
+    params = Map.put(params, "last_reply_id", Map.get(params, "user_id"))
     insert_changeset(%Data.Thread{}, params)
     |> Repo.insert
     |> remove_associations

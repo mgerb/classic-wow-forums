@@ -1,18 +1,32 @@
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
+import { get } from 'lodash';
+import { ThreadService } from '../../services';
 import { LoginButton } from '../../components';
+import { ThreadModel } from '../../model';
 import './forum.scss';
 
 interface Props extends RouteComponentProps<any> {}
 
-interface State {}
+interface State {
+  threads: ThreadModel[];
+}
 
 export class Forum extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      threads: [],
+    };
   }
 
   componentDidMount() {
+    this.getThreads();
+  }
+
+  private async getThreads() {
+    const threads = await ThreadService.getCategoryThreads(this.props.match.params['id']);
+    this.setState({ threads });
   }
 
   renderHeader() {
@@ -59,15 +73,15 @@ export class Forum extends React.Component<Props, State> {
   }
 
   renderThreadRows() {
-    return Array(40).fill('test 123').map((thread, index) => {
+    return this.state.threads.map((thread, index) => {
       return (
         <div className={`forum-row ${index % 2 === 0 && 'forum-row--dark'}`} key={index}>
-          {this.renderCell(thread, { maxWidth: '50px' })}
-          {this.renderCell(<Link to="#">This is a test subject that could be really long</Link>, { minWidth: '200px' })}
-          {this.renderCell(<b>thread</b>, { maxWidth: '150px' })}
-          {this.renderCell(<b>thread</b>, { maxWidth: '150px' }, true)}
-          {this.renderCell(<b>thread</b>, { maxWidth: '150px' }, true)}
-          {this.renderCell(<span>by <b>thread</b></span>, { maxWidth: '200px' })}
+          {this.renderCell('flag', { maxWidth: '50px' })}
+          {this.renderCell(<Link to={`/thread/${thread.id}`}>{thread.title}</Link>, { minWidth: '200px' })}
+          {this.renderCell(<b>{thread.user.battletag}</b>, { maxWidth: '150px' })}
+          {this.renderCell(<b>{thread.reply_count}</b>, { maxWidth: '150px' }, true)}
+          {this.renderCell(<b>{thread.view_count}</b>, { maxWidth: '150px' }, true)}
+          {this.renderCell(<span>by <b>{get(thread, 'last_reply.battletag')}</b></span>, { maxWidth: '200px' })}
         </div>
       );
     });
