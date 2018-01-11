@@ -50,7 +50,14 @@ defmodule MyAppWeb.ThreadController do
   @spec get(map, map) :: any
   def get(conn, params) do
 
-    {output, status} = params["id"]
+    fingerprint = get_req_header(conn, "fp")
+    thread_id = params["id"]
+
+    spawn fn ->
+      MyApp.ViewCounter.thread_view_count(fingerprint, thread_id)
+    end
+
+    {output, status} = thread_id
       |> Data.Thread.get
       |> Response.put_resp
 

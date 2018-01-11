@@ -110,6 +110,14 @@ defmodule MyApp.Data.Thread do
     end
   end
 
+  # this doesn't update the 'updated_at' field which is what we want
+  def update_view_count(thread_id) do
+    query = from t in Data.Thread,
+      update: [inc: [view_count: 1]],
+      where: t.id == ^thread_id
+    Repo.update_all(query, [])
+  end
+
   # TODO: delete thread
 
   defp process_user_update(thread, _params) when is_nil(thread), do: {:error, "Invalid thread"}

@@ -44,7 +44,7 @@ defmodule MyApp.Data.Reply do
     thread_id = Map.get(reply, :thread_id)
     user_id = Map.get(reply, :user_id)
     query = from t in Data.Thread, where: t.id == ^thread_id,
-      update: [set: [last_reply_id: ^user_id], inc: [reply_count: 1]]
+      update: [set: [last_reply_id: ^user_id, updated_at: ^DateTime.utc_now], inc: [reply_count: 1]]
 
     case Repo.update_all(query, []) do
       nil -> {:error, "update thread error"}
