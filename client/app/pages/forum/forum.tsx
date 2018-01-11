@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { get } from 'lodash';
 import { ThreadService } from '../../services';
-import { LoginButton } from '../../components';
+import { ForumNav, LoginButton, ScrollToTop } from '../../components';
 import { ThreadModel } from '../../model';
 import './forum.scss';
 
@@ -32,12 +32,7 @@ export class Forum extends React.Component<Props, State> {
   renderHeader() {
     return (
       <div className="forum-header">
-        <div>
-          <img src={require('../../assets/wow-base-general.gif')}/>
-          <div className="forum-nav">
-            <small>Forum Nav:</small><select style={{ minWidth: '194px' }}></select>
-          </div>
-        </div>
+        <ForumNav />
         <div style={{ height: '100%' }}>
           <LoginButton/>
         </div>
@@ -115,10 +110,10 @@ export class Forum extends React.Component<Props, State> {
 
   render() {
     return (
-      <div>
+      <ScrollToTop>
         {this.renderHeader()}
         {this.renderBody()}
-      </div>
+      </ScrollToTop>
     );
   }
 

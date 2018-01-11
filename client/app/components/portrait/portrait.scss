@@ -1,0 +1,9 @@
+.portrait {
+  position: relative;
+
+  &__level-circle {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+  }
+}
