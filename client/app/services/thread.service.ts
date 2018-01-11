@@ -1,10 +1,13 @@
+import { orderBy } from 'lodash';
 import axios from '../axios/axios';
 import { ThreadModel } from '../model';
 
 const getCategoryThreads = async (category_id: string): Promise<ThreadModel[]> => {
   try {
     const res = await axios.get(`/api/thread?category_id=${category_id}`);
-    return res.data.data;
+    return orderBy(res.data.data as ThreadModel[], (thread: ThreadModel) => {
+      return -(new Date(thread.updated_at));
+    });
   } catch (e) {
     console.error(e);
   }

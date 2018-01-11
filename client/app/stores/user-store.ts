@@ -1,6 +1,6 @@
 import { action, observable } from 'mobx';
 import { UserModel } from '../model';
-import { resetAuthorizationHeader, setAuthorizationHeader } from '../axios/axios';
+import { resetAuthorizationHeader } from '../axios/axios';
 
 export class UserStore {
 
@@ -22,7 +22,6 @@ export class UserStore {
     const u = localStorage.getItem('user');
     if (u) {
       this.user = JSON.parse(u);
-      setAuthorizationHeader(this.user!.token);
     }
   }
 
