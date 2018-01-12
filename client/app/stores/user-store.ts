@@ -13,16 +13,28 @@ export class UserStore {
     });
   }
 
-  @action setUser(user: UserModel) {
-    localStorage.setItem('user', JSON.stringify(user));
-    this.getUserFromStorage();
-  }
-
   @action private getUserFromStorage(): void {
     const u = localStorage.getItem('user');
     if (u) {
       this.user = JSON.parse(u);
     }
+  }
+
+  @action setUser(user: UserModel) {
+    localStorage.setItem('user', JSON.stringify(user));
+    this.getUserFromStorage();
+  }
+
+  @action public setCharacterInfo(info: {[key: string]: string}) {
+    const { character_avatar, character_class, character_guild, character_name, character_realm } = info;
+    const user = {...this.user!, 
+      character_avatar,
+      character_class,
+      character_guild,
+      character_name,
+      character_realm,
+    };
+    this.setUser(user);
   }
 
   // when the user logs out

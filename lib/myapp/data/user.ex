@@ -48,7 +48,7 @@ defmodule MyApp.Data.User do
   defp get_user(battle_net_id) do
     query = from u in "user",
       where: u.battle_net_id == ^battle_net_id,
-      select: [:id, :permissions, :battle_net_id, :battletag]
+      select: [:id, :permissions, :battle_net_id, :battletag, :character_guild, :character_name, :character_class, :character_realm, :character_avatar]
     Repo.one(query)
   end
 

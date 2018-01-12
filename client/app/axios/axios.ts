@@ -40,7 +40,7 @@ export const initializeAxios = (): Promise<void> => {
 
 
 export function setAuthorizationHeader(jwt: string): void {
-  ax.defaults.headers.common['Authorization'] = jwt;
+  ax.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
 }
 
 export function resetAuthorizationHeader(): void {

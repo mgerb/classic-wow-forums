@@ -1,8 +1,10 @@
 import React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
+import { Portrait } from '../portrait/portrait';
 import { UserStore } from '../../stores/user-store';
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
   className?: string;
   userStore?: UserStore;
 }
@@ -23,12 +25,27 @@ export class LoginButton extends React.Component<Props, State> {
     window.open(oauthUrl, '_blank', 'resizeable=yes, height=900, width=1200');
   }
 
-  render() {
+  renderPortrait() {
     return (
-      <div className={this.props.className}>
+      <div onClick={() => this.props.history.push('/user-account')} style={{ cursor: 'pointer' }}>
+        <Portrait imageSrc={require('../../assets/Tyren.gif')}/>
+      </div>
+    );
+  }
+
+  renderLoginButton() {
+    return (
+      <div>
         <img src={require('../../assets/login-bot-left.gif')} />
         <img src={require('../../assets/login-bot-login.gif')} style={{ cursor: 'pointer' }} onClick={this.login.bind(this)} />
         <img src={require('../../assets/login-bot-right.gif')} />
+      </div>
+    );
+  }
+  render() {
+    return (
+      <div className={this.props.className}>
+        {this.props.userStore!.user ? this.renderPortrait() : this.renderLoginButton()}
       </div>
     );
   }
