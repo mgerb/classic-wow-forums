@@ -22,17 +22,12 @@ defmodule MyAppWeb.Router do
   scope "/api", MyAppWeb do
     pipe_through [:api]
 
-    scope "/battlenet" do
-      post "/authorize", BattleNetController, :authorize
-
-      pipe_through [:user_auth]
-      get "/characters", BattleNetController, :characters
-    end
-
     scope "/user" do
-      # authenticated routes
+      post "/authorize", UserController, :authorize
+
       pipe_through [:user_auth]
-      get "/", UserController, :index
+      get "/characters", UserController, :characters
+      put "/characters", UserController, :update_selected_character
     end
 
     scope "/thread" do

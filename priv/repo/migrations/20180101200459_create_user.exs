@@ -6,7 +6,11 @@ defmodule MyApp.Repo.Migrations.CreateUser do
       add :battle_net_id, :integer
       add :battletag, :string
       add :permissions, :string
-
+      add :character_guild, :string
+      add :character_name, :string
+      add :character_class, :string
+      add :character_realm, :string
+      add :character_avatar, :string
       timestamps()
     end
 

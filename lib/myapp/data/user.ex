@@ -10,6 +10,11 @@ defmodule MyApp.Data.User do
     field :battle_net_id, :integer
     field :battletag, :string
     field :permissions, :string, default: "user" # admin, mod, user
+    field :character_guild, :string
+    field :character_name, :string
+    field :character_class, :string
+    field :character_realm, :string
+    field :character_avatar, :string
     timestamps()
   end
 
@@ -18,6 +23,25 @@ defmodule MyApp.Data.User do
     |> cast(params, [:battle_net_id, :battletag])
     |> validate_required([:battle_net_id, :battletag])
     |> unique_constraint(:battle_net_id)
+  end
+
+  defp update_char_changeset(user, params \\ %{}) do
+    user
+    |> cast(params, [:character_guild, :character_name, :character_class, :character_realm, :character_avatar])
+    |> validate_required([:character_name, :character_class, :character_realm, :character_avatar])
+  end
+
+  def update_character(params) do
+    {:ok, data} = Repo.transaction(fn ->
+      user = Repo.get(__MODULE__, Map.get(params, "id"))
+      # remove columns from data because we need to update all of them
+      |> Map.drop([:character_realm, :character_name, :character_guild, :character_class, :character_avatar])
+      output = user
+      |> update_char_changeset(params)
+      |> Repo.update
+      |> Data.Util.process_insert_or_update
+    end)
+    data
   end
 
   @spec get_user(integer) :: nil | map
