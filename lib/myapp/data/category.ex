@@ -11,12 +11,6 @@ defmodule MyApp.Data.Category do
     field :title, :string
   end
 
-  def changeset(category, params \\ %{}) do
-    category
-    |> cast(params, [:category, :title])
-    |> validate_required([:category, :title])
-  end
-
   def get_categories() do
     Repo.all(Data.Category)
   end
