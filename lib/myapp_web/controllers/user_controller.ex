@@ -37,16 +37,26 @@ defmodule MyAppWeb.UserController do
   end
 
   def update_selected_character(conn, params) do
-    id = conn
+    %{"id" => user_id, "access_token" => access_token} = conn
     |> MyApp.Guardian.Plug.current_claims
-    |> Map.get("id")
+    |> Map.take(["id", "access_token"])
     
-    params = params
-    |> Map.put("id", id)
-    |> Map.put_new("character_guild", nil) # set guild to nil if it doesn't exist
+    # validate the character exists in users WoW profile
+    {:ok, characterList} = BattleNet.User.get_user_characters(user_id, access_token)
+    exists = Enum.find(characterList["characters"], fn(char) ->
+      char["name"] == params["character_name"] && char["realm"] == params["character_realm"]
+    end)
 
-    {output, status} = params
-    |> Data.User.update_character
+    {output, status} = case exists do
+      nil -> {:error, "character doesn't exist"}
+      _ -> 
+        params = params
+        |> Map.put("id", user_id)
+        |> Map.put_new("character_guild", nil) # set guild to nil if it doesn't exist
+
+        params
+        |> Data.User.update_character
+    end
     |> Response.put_resp
 
     conn
