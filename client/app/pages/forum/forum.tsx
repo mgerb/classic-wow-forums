@@ -34,7 +34,7 @@ export class Forum extends React.Component<Props, State> {
       <div className="forum-header">
         <ForumNav />
         <div style={{ height: '100%' }}>
-          <LoginButton {...this.props}/>
+          <LoginButton onNavigate={dest => this.props.history.push(dest)}/>
         </div>
       </div>
     );

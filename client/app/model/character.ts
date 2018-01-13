@@ -1,3 +1,5 @@
+import { AvatarModel } from './avatar';
+
 export interface CharacterModel {
   achievementPoints: number;
   battlegroup: string;
@@ -10,4 +12,7 @@ export interface CharacterModel {
   race: number;
   realm: string;
   spec: any;
+
+  avatarList?: AvatarModel[];
+  races?: number[];
 }

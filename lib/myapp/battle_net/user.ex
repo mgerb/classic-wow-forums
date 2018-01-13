@@ -45,7 +45,12 @@ defmodule MyApp.BattleNet.User do
   defp parse_character_response({:ok, %HTTPoison.Response{body: body}}, user_id) do
     case Poison.decode(body) do
       {:ok, data} ->
-        Cachex.set(:myapp, "usr_char:#{user_id}", data, ttl: :timer.minutes(10)) # 10 minutes
+        # only cache end point if characters return
+        if (!data["characters"]) do
+          {:error, data}
+        else
+          Cachex.set(:myapp, "usr_char:#{user_id}", data, ttl: :timer.minutes(10)) # 10 minutes
+        end
         {:ok, data}
       {:error, error} -> {:error, error}
     end

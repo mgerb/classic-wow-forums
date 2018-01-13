@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "lib": ["dom", "es7"],
     "experimentalDecorators": true,
     "target": "es2015",
     "module": "es2015",

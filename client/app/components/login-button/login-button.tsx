@@ -1,12 +1,13 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import { Portrait } from '../portrait/portrait';
 import { UserStore } from '../../stores/user-store';
+import { CharacterService } from '../../services';
 
-interface Props extends RouteComponentProps<any> {
+interface Props {
   className?: string;
   userStore?: UserStore;
+  onNavigate: (des: string) => any;
 }
 
 interface State {}
@@ -26,9 +27,16 @@ export class LoginButton extends React.Component<Props, State> {
   }
 
   renderPortrait() {
+    const avatarSrc = CharacterService.getAvatar(this.props.userStore!.user!.character_avatar!);
     return (
-      <div onClick={() => this.props.history.push('/user-account')} style={{ cursor: 'pointer' }}>
-        <Portrait imageSrc={require('../../assets/Tyren.gif')}/>
+      <div style={{ padding: '10px' }}>
+        <div onClick={() => this.props.onNavigate('/user-account')} style={{ cursor: 'pointer' }}>
+          {avatarSrc && <Portrait imageSrc={avatarSrc}/>}
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          {!avatarSrc && <p><a onClick={() => this.props.onNavigate('/user-account')}>Account</a></p>}
+          <div><b>{this.props.userStore!.user!.character_name}</b></div>
+        </div>
       </div>
     );
   }

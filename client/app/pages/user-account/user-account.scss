@@ -12,7 +12,7 @@
     transition: all 0.1s ease-in-out;
     top: 0;
 
-    &:hover, &__selected {
+    &:hover, &--selected {
       top: -1px;
       box-shadow: 0 0 10px #00C0FF;
     }

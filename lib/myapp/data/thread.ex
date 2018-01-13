@@ -70,8 +70,8 @@ defmodule MyApp.Data.Thread do
         :title,
         :view_count,
         :reply_count,
-        user: [:id, :battletag],
-        last_reply: [:id, :battletag],
+        user: [:id, :battletag, :character_guild, :character_name, :character_class, :character_realm, :character_avatar],
+        last_reply: [:id, :battletag, :character_guild, :character_name, :character_class, :character_realm, :character_avatar],
       ]),
       where: [category_id: ^category_id],
       preload: [:user, :last_reply]
