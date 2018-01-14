@@ -6,7 +6,7 @@ import './home.scss';
 
 import header_forms from '../../assets/header-forums.gif';
 import support from '../../assets/support.gif';
-import serverstatus from '../../assets/serverstatus.gif';
+// import serverstatus from '../../assets/serverstatus.gif';
 import uicustomizations from '../../assets/uicustomizations.gif';
 import bugs from '../../assets/bugs.gif';
 import realms from '../../assets/realms.gif';
@@ -42,23 +42,23 @@ export class Home extends React.Component<Props, State> {
     super(props);
   }
 
-  private renderTopic(link: string, title: string, icon: any, text: string): any {
+  private renderTopic(topicId: number | string, title: string, icon: any, text: string): any {
     return (
       <div className="topic-item">
-        <img className="topic-item-icon" src={icon}/>
+        <img className="topic-item-icon" src={icon} />
         <div>
-          <Link to={link}>{title}</Link>
+          <Link to={typeof topicId === 'number' ? `/f/${topicId}` : topicId}>{title}</Link>
           <div>{text}</div>
         </div>
       </div>
     );
   }
 
-  private renderClass(title: string, url: string, icon: any): any {
+  private renderClass(title: string, topicId: number, icon: any): any {
     return (
       <div className="flex flex--center" style={{ flex: 1 }}>
-        <img className="topic-item-icon" src={icon}/>
-        <a href={url}>{title}</a>
+        <img className="topic-item-icon" src={icon} />
+        <Link to={`/f/${topicId}`}>{title}</Link>
       </div>
     );
   }
@@ -67,19 +67,19 @@ export class Home extends React.Component<Props, State> {
     return (
       <div className="classes-container">
         <div className="item-row item-row__class">
-          {this.renderClass('Druid', '#', druid)}
-          {this.renderClass('Rogue', '#', rogue)}
-          {this.renderClass('Priest', '#', priest)}
+          {this.renderClass('Druid', 0, druid)}
+          {this.renderClass('Rogue', 1, rogue)}
+          {this.renderClass('Priest', 2, priest)}
         </div>
         <div className="item-row item-row__class">
-          {this.renderClass('Hunter', '#', hunter)}
-          {this.renderClass('Shaman', '#', shaman)}
-          {this.renderClass('Warrior', '#', warrior)}
+          {this.renderClass('Hunter', 3, hunter)}
+          {this.renderClass('Shaman', 4, shaman)}
+          {this.renderClass('Warrior', 5, warrior)}
         </div>
         <div className="item-row item-row__class">
-          {this.renderClass('Mage', '#', mage)}
-          {this.renderClass('Paladin', '#', paladin)}
-          {this.renderClass('Warlock', '#', warlock)}
+          {this.renderClass('Mage', 6, mage)}
+          {this.renderClass('Paladin', 7, paladin)}
+          {this.renderClass('Warlock', 8, warlock)}
         </div>
       </div>
     );
@@ -98,23 +98,36 @@ export class Home extends React.Component<Props, State> {
             the World of Warcraft community forums requires a World of Warcraft account. Only customers are allowed to post on these forums,
             but anyone can read them. Please note that you must adhere to the Forum Guidelines if you wish to post on the forums.
           </p>
-          
+
           <div className="topic-container">
             <div className="topic-row">
-              {this.renderTopic('#', 'Technical Support', support, `If you're experiencing technical problems playing World of Warcraft, post here for assistance.`)}
-              {this.renderTopic('#', 'Realm Status', serverstatus, `Collection of important messages regarding the status of the Realms.`)}
+              {this.renderTopic(
+                137,
+                'Site Suggestions',
+                support,
+                `Have a suggestion for this site? Please post it here.`,
+              )}
+              { /* maybe add realm status in the future */
+                /* {this.renderTopic(
+                '#', 'Realm Status', serverstatus,
+                `Collection of important messages regarding the status of the Realms.`)} */}
             </div>
             <div className="topic-row">
-              {this.renderTopic('#', 'UI & Macros Forum', uicustomizations, `Work with other players to create your own special custom interfaces and macros.`)}
-              {this.renderTopic('#', 'Bug Report Forum', bugs, `Found a bug in the game? Help us squash it by reporting it here!`)}
+              {this.renderTopic(
+                138,
+                'UI & Macros Forum',
+                uicustomizations,
+                `Work with other players to create your own special custom interfaces and macros.`,
+              )}
+              {this.renderTopic(139, 'Bug Report Forum', bugs, `Found a bug on this site? Help us squash it by reporting it here!`)}
             </div>
 
-            <hr/>
+            <hr />
 
             <div className="topic-row topic-row__classes">
               <div className="topic-item topic-item__classes">
                 <div className="flex" style={{ marginBottom: '10px' }}>
-                  <img className="topic-item-icon" src={bullet}/>
+                  <img className="topic-item-icon" src={bullet} />
                   <div>
                     <b>Classes</b>
                     <div>Discuss your favorite class:</div>
@@ -125,50 +138,62 @@ export class Home extends React.Component<Props, State> {
 
               <div className="topic-item topic-item__classes">
                 <div className="item-row" style={{ minWidth: '250px' }}>
-                  <img className="topic-item-icon" src={professions}/>
+                  <img className="topic-item-icon" src={professions} />
                   <div>
-                    <a href="#">Professions</a>
+                    <Link to="/f/140">Professions</Link>
                     <div>Discuss professions in detail.</div>
                   </div>
                 </div>
                 <div className="item-row">
-                  <img className="topic-item-icon" src={pvp}/>
+                  <img className="topic-item-icon" src={pvp} />
                   <div>
-                    <a href="#">PvP Discussion</a>
+                    <Link to="/f/141">PvP Discussion</Link>
                     <div>Discuss player versus player combat.</div>
                   </div>
                 </div>
                 <div className="item-row">
-                  <img className="topic-item-icon" src={quests}/>
+                  <img className="topic-item-icon" src={quests} />
                   <div>
-                    <a href="#">Quest Discussion</a>
+                    <Link to="/f/142">Quest Discussion</Link>
                     <div>Talk about and get help with the countless quests in World of Warcraft.</div>
                   </div>
                 </div>
               </div>
-
             </div>
 
             <div className="topic-row">
-              {this.renderTopic('/realms', 'Realm Forums', realms, `Discuss topics related to World of Warcraft with players on your specific Realm.`)}
-              {this.renderTopic('#', 'Off-topic', offtopic, `Off-topic posts of interest to the World of Warcraft community.`)}
+              {this.renderTopic(
+                '/realms',
+                'Realm Forums',
+                realms,
+                `Discuss topics related to World of Warcraft with players on your specific Realm.`,
+              )}
+              {this.renderTopic(131, 'Off-topic', offtopic, `Off-topic posts of interest to the World of Warcraft community.`)}
             </div>
             <div className="topic-row">
-              {this.renderTopic('#', 'Suggestions', suggestions, `Have a suggestion for World of Warcraft? Please post it here.`)}
-              {this.renderTopic('#', 'Guild Recruitment', guilds, `Searching for a guild, or do you want to advertise your guild?`)}
+              {this.renderTopic(134, 'Suggestions', suggestions, `Have a suggestion for World of Warcraft? Please post it here.`)}
+              {this.renderTopic(132, 'Guild Recruitment', guilds, `Searching for a guild, or do you want to advertise your guild?`)}
             </div>
             <div className="topic-row">
-              {this.renderTopic('#', 'Role-Playing', roleplaying, `Pull up a chair, drink a mug of ale, meet new friends, tell stories, and role-play in this forum.`)}
-              {this.renderTopic('#', 'General Discussion.', general, `Discuss World of Warcraft.`)}
+              {this.renderTopic(
+                135,
+                'Role-Playing',
+                roleplaying,
+                `Pull up a chair, drink a mug of ale, meet new friends, tell stories, and role-play in this forum.`,
+              )}
+              {this.renderTopic(133, 'General Discussion.', general, `Discuss World of Warcraft.`)}
             </div>
             <div className="topic-row">
-              {this.renderTopic('#', 'Raid and Dungeon Discussion', dungeons, `Discuss the instance dungeons and end-game raid encounters in World of Warcraft.`)}
+              {this.renderTopic(
+                136,
+                'Raid and Dungeon Discussion',
+                dungeons,
+                `Discuss the instance dungeons and end-game raid encounters in World of Warcraft.`,
+              )}
             </div>
-
           </div>
 
-          <hr/>
-
+          <hr />
         </ContentContainer>
       </ScrollToTop>
     );

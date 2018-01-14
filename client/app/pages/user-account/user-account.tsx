@@ -52,7 +52,6 @@ export class UserAccount extends React.Component<Props, State> {
           this.setState({ noCharacters: true });
           return;
         }
-        // remove classes that weren't in vanilla
         const characters = groupBy(res.characters, 'realm');
         this.setState({
           characters,

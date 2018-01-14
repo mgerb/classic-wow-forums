@@ -35,6 +35,7 @@ export class LoginButton extends React.Component<Props, State> {
         </div>
         <div style={{ textAlign: 'center' }}>
           {!avatarSrc && <p><a onClick={() => this.props.onNavigate('/user-account')}>Account</a></p>}
+          <div><b>{this.props.userStore!.user!.battletag}</b></div>
           <div><b>{this.props.userStore!.user!.character_name}</b></div>
         </div>
       </div>

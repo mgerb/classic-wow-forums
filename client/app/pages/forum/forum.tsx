@@ -21,18 +21,25 @@ export class Forum extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.getThreads();
+    this.getThreads(this.props.match.params['id']);
   }
 
-  private async getThreads() {
-    const threads = await ThreadService.getCategoryThreads(this.props.match.params['id']);
+  // update the page if the route params change
+  componentWillReceiveProps(nextProps: Props) {
+    if (this.props.match.params !== nextProps.match.params) {
+      this.getThreads(nextProps.match.params['id']);
+    }
+  }
+
+  private async getThreads(categoryId: string) {
+    const threads = await ThreadService.getCategoryThreads(categoryId);
     this.setState({ threads });
   }
 
   renderHeader() {
     return (
       <div className="forum-header">
-        <ForumNav />
+        <ForumNav categoryId={parseInt(this.props.match.params['id'], 10)} {...this.props}/>
         <div style={{ height: '100%' }}>
           <LoginButton onNavigate={dest => this.props.history.push(dest)}/>
         </div>
@@ -68,11 +75,12 @@ export class Forum extends React.Component<Props, State> {
   }
 
   renderThreadRows() {
+    const categoryId = this.props.match.params['id'];
     return this.state.threads.map((thread, index) => {
       return (
         <div className={`forum-row ${index % 2 === 0 && 'forum-row--dark'}`} key={index}>
           {this.renderCell('flag', { maxWidth: '50px' })}
-          {this.renderCell(<Link to={`/thread/${thread.id}`}>{thread.title}</Link>, { minWidth: '200px' })}
+          {this.renderCell(<Link to={`/f/${categoryId}/${thread.id}`}>{thread.title}</Link>, { minWidth: '200px' })}
           {this.renderCell(<b>{thread.user.battletag}</b>, { maxWidth: '150px' })}
           {this.renderCell(<b>{thread.reply_count}</b>, { maxWidth: '150px' }, true)}
           {this.renderCell(<b>{thread.view_count}</b>, { maxWidth: '150px' }, true)}
@@ -88,7 +96,7 @@ export class Forum extends React.Component<Props, State> {
         <div className="forum-table">
 
           <div className="forum-row forum-row--header">
-            <div className="forum-cell forum-cell--header flex-1">Test</div>
+            <div className="forum-cell forum-cell--header flex-1">TODO:</div>
           </div>
 
           <div className="forum-row forum-row--header">

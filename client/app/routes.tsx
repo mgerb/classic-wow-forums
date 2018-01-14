@@ -45,9 +45,9 @@ export class Routes extends React.Component<Props, State> {
               <Route exact path="/" component={Home} />
               <Route exact path="/realms" component={Realms} />
               <Route exact path="/f/:id" component={Forum} />
+              <Route exact path="/f/:categoryId/:threadId" component={Thread} />
               <Route exact path="/oauth" component={Oauth} />
               <Route exact path="/user-account" component={UserAccount} />
-              <Route exact path="/thread/:id" component={Thread} />
               <Route component={NotFound} />
             </Switch>
             <Footer />

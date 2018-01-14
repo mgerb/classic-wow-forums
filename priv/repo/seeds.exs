@@ -165,12 +165,18 @@ defmodule Category do
 
   defp get_other() do
     [
-      %{"id" => 131, "category" => "other", "title" => "Off-Topic"},
+      %{"id" => 131, "category" => "other", "title" => "Off-topic"},
       %{"id" => 132, "category" => "other", "title" => "Guild Recruitment"},
       %{"id" => 133, "category" => "other", "title" => "General Discussion"},
       %{"id" => 134, "category" => "other", "title" => "Suggestions"},
       %{"id" => 135, "category" => "other", "title" => "Role-Playing"},
       %{"id" => 136, "category" => "other", "title" => "Raid and Dungeon Discussion"},
+      %{"id" => 137, "category" => "other", "title" => "Site Suggestions"},
+      %{"id" => 138, "category" => "other", "title" => "UI & Macros Forum"},
+      %{"id" => 139, "category" => "other", "title" => "Bug Report Forum"},
+      %{"id" => 140, "category" => "other", "title" => "Professions"},
+      %{"id" => 141, "category" => "other", "title" => "PvP Discussion"},
+      %{"id" => 142, "category" => "other", "title" => "Quest Discussion"},
     ]
   end
 

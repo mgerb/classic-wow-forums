@@ -1,6 +1,15 @@
 .forum-nav {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
   padding-left: 5px;
-  position: relative;
-  bottom: 10;
+  background-image: url('../../assets/forum-nav-header-bg.gif');
+  background-repeat: no-repeat;
+  height: 51px;
+  width: 300px;
+  overflow: hidden;
+
+  &__title {
+    height: 27px;
+    line-height: 27px;
+  }
 }

@@ -24,7 +24,7 @@ export class Thread extends React.Component<Props, State> {
   }
 
   private async getThreads() {
-    const thread = await ThreadService.getThread(this.props.match.params['id']);
+    const thread = await ThreadService.getThread(this.props.match.params['threadId']);
     thread.replies = [thread as any, ...thread.replies]; // add the thread topic to the front of the list
     this.setState({ thread });
   }
@@ -71,7 +71,8 @@ export class Thread extends React.Component<Props, State> {
       <ScrollToTop {...this.props}>
 
         <div style={{ padding: '16px 0 12px 0' }}>
-          <ForumNav/>
+          {/* todo: */}
+          <ForumNav categoryId={parseInt(this.props.match.params['categoryId'], 10)} {...this.props}/>
         </div>
 
         <div className="topic-bg">
