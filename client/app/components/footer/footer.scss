@@ -2,7 +2,10 @@
   background-image: url('../../assets/bottom-bg.gif');
   background-repeat: repeat-x;
   height: 46px;
+  width: 100%;
   display: flex;
   justify-content: center;
   overflow: hidden;
+  position: absolute;
+  bottom: 0;
 }
