@@ -1,21 +1,30 @@
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { get } from 'lodash';
+import { inject, observer } from 'mobx-react';
 import { ThreadService } from '../../services';
-import { ForumNav, LoginButton, ScrollToTop } from '../../components';
+import { Editor, ForumNav, LoginButton, ScrollToTop } from '../../components';
 import { ThreadModel } from '../../model';
+import { UserStore } from '../../stores/user-store';
 import './forum.scss';
+import { Oauth } from '../../util';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {
+  userStore: UserStore;
+}
 
 interface State {
+  showEditor: boolean;
   threads: ThreadModel[];
 }
 
+@inject('userStore')
+@observer
 export class Forum extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      showEditor: false,
       threads: [],
     };
   }
@@ -36,6 +45,21 @@ export class Forum extends React.Component<Props, State> {
     this.setState({ threads });
   }
 
+  onNewTopic() {
+    if (this.props.userStore.user) {
+      this.setState({ showEditor: true });
+    } else {
+      Oauth.openOuathWindow();
+    }
+  }
+
+  onNewTopicClose(cancel: boolean) {
+    this.setState({ showEditor: false });
+    if (!cancel) {
+      this.getThreads(this.props.match.params['id']);
+    }
+  }
+
   renderHeader() {
     return (
       <div className="forum-header">
@@ -52,13 +76,15 @@ export class Forum extends React.Component<Props, State> {
       <div className="forum-body">
         <div className="flex">
           <img src={require('../../assets/forum-menu-left.gif')}/>
-          <img src={require('../../assets/forum-menu-newtopic.gif')}/>
+          <img src={require('../../assets/forum-menu-newtopic.gif')}
+            className="clickable"
+            onClick={() => this.onNewTopic()}/>
           <img src={require('../../assets/forum-menu-right.gif')}/>
           <img src={require('../../assets/forum-menu-search-left.gif')}/>
           <div className="forum-menu-search-bg">
             <input name="SearchText"/>
           </div>
-          <img src={require('../../assets/forum-menu-search.gif')}/>
+          <img src={require('../../assets/forum-menu-search.gif')} className="clickable"/>
           <div className="forumliner-bg"/>
         </div>
 
@@ -119,6 +145,8 @@ export class Forum extends React.Component<Props, State> {
   render() {
     return (
       <ScrollToTop>
+        {this.state.showEditor && <Editor categoryId={this.props.match.params['id']}
+          onClose={cancel => this.onNewTopicClose(cancel)}/>}
         {this.renderHeader()}
         {this.renderBody()}
       </ScrollToTop>

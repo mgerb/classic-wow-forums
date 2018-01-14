@@ -5,7 +5,7 @@ defmodule MyApp.Repo.Migrations.CreateReply do
     create table(:reply) do
       add :user_id, references(:user)
       add :thread_id, references(:thread)
-      add :content, :string
+      add :content, :string, size: 2000
       add :edited, :boolean
       add :quote, :boolean
       timestamps()

@@ -1,0 +1,47 @@
+.editor-container {
+  z-index: 1;
+  top: 0;
+  left: 0;
+  height: calc(100% - 96px);
+  width: 100%;
+  position: fixed;
+  background-color: rgba(0, 0, 0, .5);
+  padding-top: 50px;
+}
+
+.editor {
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 40px;
+
+  &__title {
+    height: 25px;
+    margin-bottom: 20px;
+  }
+
+  &__text-area {
+    min-height: 100px;
+    resize: none;
+    margin-bottom: 20px;
+    overflow-wrap: break-word;
+  }
+
+  &__preview {
+    min-height: 100px;
+    background-color: #161616;
+    border-radius: 2px;
+    padding: 5px 10px;
+    overflow-y: auto;
+    overflow-wrap: break-word;
+  }
+
+  &__submit {
+    padding: 20px 0;
+  }
+
+  &__error-message {
+    margin-left: 10px;
+    color: red;
+  }
+}

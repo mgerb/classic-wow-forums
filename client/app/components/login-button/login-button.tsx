@@ -3,6 +3,7 @@ import { inject, observer } from 'mobx-react';
 import { Portrait } from '../portrait/portrait';
 import { UserStore } from '../../stores/user-store';
 import { CharacterService } from '../../services';
+import { Oauth } from '../../util';
 
 interface Props {
   className?: string;
@@ -12,18 +13,12 @@ interface Props {
 
 interface State {}
 
-// TODO: add prod url
-const oauthUrl: string =
-  process.env.NODE_ENV === 'production'
-    ? ''
-    : 'https://us.battle.net/oauth/authorize?redirect_uri=https://localhost/oauth&scope=wow.profile&client_id=2pfsnmd57svcpr5c93k7zb5zrug29xvp&response_type=code';
-
 @inject('userStore')
 @observer
 export class LoginButton extends React.Component<Props, State> {
 
   login() {
-    window.open(oauthUrl, '_blank', 'resizeable=yes, height=900, width=1200');
+    Oauth.openOuathWindow();
   }
 
   renderPortrait() {

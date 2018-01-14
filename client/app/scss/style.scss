@@ -1,7 +1,9 @@
+$fontPrimary: #cccccc;
+
 html {
   font-family: Arial,Helvetica,Sans-Serif;
   font-size: 10pt;
-  color: #cccccc;
+  color: $fontPrimary;
 }
 
 b {
@@ -70,4 +72,21 @@ span.grey {
 
 .text-center {
   text-align: center;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.input {
+  border: 1px solid lighten(#161616, 10%);
+  background-color: #161616;
+  border-radius: 2px;
+  color: $fontPrimary;
+  width: 100%;
+  padding: 5px 10px;
+
+  &:focus {
+    outline: none;
+  }
 }

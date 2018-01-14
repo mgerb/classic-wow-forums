@@ -1,8 +1,9 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { get } from 'lodash';
+import { get, map } from 'lodash';
+import marked from 'marked';
 import { ThreadService } from '../../services';
-import { ForumNav, Portrait, ScrollToTop } from '../../components';
+import { Portrait, ScrollToTop } from '../../components';
 import { ThreadModel } from '../../model';
 import './thread.scss';
 
@@ -25,7 +26,10 @@ export class Thread extends React.Component<Props, State> {
 
   private async getThreads() {
     const thread = await ThreadService.getThread(this.props.match.params['threadId']);
-    thread.replies = [thread as any, ...thread.replies]; // add the thread topic to the front of the list
+    thread.replies = map([thread as any, ...thread.replies], (reply) => { // add the thread topic to the front of the list
+      reply.content = marked(reply.content, { sanitize: true });
+      return reply;
+    });
     this.setState({ thread });
   }
 
@@ -50,8 +54,7 @@ export class Thread extends React.Component<Props, State> {
                   <img src={require('../../assets/reply-button.gif')} className="reply__title__button"/>
                 </div>
               </div>
-              {/* TODO: xss sanitization */}
-              <div className="reply__content">{reply.content}</div>
+              <div className="reply__content" dangerouslySetInnerHTML={{ __html: reply.content }}/>
             </div>
           </div>
         </div>
@@ -69,11 +72,6 @@ export class Thread extends React.Component<Props, State> {
 
     return (
       <ScrollToTop {...this.props}>
-
-        <div style={{ padding: '16px 0 12px 0' }}>
-          {/* todo: */}
-          <ForumNav categoryId={parseInt(this.props.match.params['categoryId'], 10)} {...this.props}/>
-        </div>
 
         <div className="topic-bg">
           <div className="threadTopic-container">

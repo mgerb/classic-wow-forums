@@ -1,4 +1,5 @@
 export * from './content-container/content-container';
+export * from './editor/editor';
 export * from './footer/footer';
 export * from './forum-nav/forum-nav';
 export * from './header/header';
