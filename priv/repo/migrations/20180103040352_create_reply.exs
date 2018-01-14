@@ -7,7 +7,7 @@ defmodule MyApp.Repo.Migrations.CreateReply do
       add :thread_id, references(:thread)
       add :content, :string, size: 2000
       add :edited, :boolean
-      add :quote, :boolean
+      add :quote_id, :integer
       timestamps()
     end
   end

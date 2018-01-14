@@ -9,14 +9,13 @@ defmodule MyApp.Data.Thread do
   schema "thread" do
     field :title, :string
     field :category_id, :integer # references :category
-    field :content, :string
     field :view_count, :integer, default: 0
     field :user_id, :integer # references :user
     field :last_reply_id, :integer
     field :sticky, :boolean, default: false
     field :locked, :boolean, default: false
     field :edited, :boolean, default: false
-    field :reply_count, :integer, default: 0
+    field :reply_count, :integer, default: 1
     has_many :replies, Data.Reply
     has_one :user, Data.User, foreign_key: :id, references: :user_id
     has_one :last_reply, Data.User, foreign_key: :id, references: :last_reply_id
@@ -25,8 +24,8 @@ defmodule MyApp.Data.Thread do
 
   defp insert_changeset(thread, params \\ %{}) do
     thread
-    |> cast(params, [:title, :category_id, :content, :user_id, :last_reply_id])
-    |> validate_required([:title, :category_id, :content, :user_id])
+    |> cast(params, [:title, :category_id, :user_id, :last_reply_id])
+    |> validate_required([:title, :category_id, :user_id])
     |> foreign_key_constraint(:category_id)
     |> foreign_key_constraint(:user_id)
   end
@@ -35,14 +34,6 @@ defmodule MyApp.Data.Thread do
   defp mod_update_changeset(thread, params \\ %{}) do
     thread
     |> cast(params, [:sticky, :locked])
-  end
-
-  # allow user to update content of their own thread
-  defp user_update_changeset(thread, params \\ %{}) do
-    thread
-    |> cast(params, [:content])
-    |> force_change(:edited, true) # set edited flag on update
-    |> validate_required([:content])
   end
 
   def get(thread_id) do
@@ -65,7 +56,6 @@ defmodule MyApp.Data.Thread do
         :locked,
         :last_reply_id,
         :edited,
-        :content,
         :category_id,
         :title,
         :view_count,
@@ -89,25 +79,18 @@ defmodule MyApp.Data.Thread do
 
   @spec insert(map) :: {:ok, map} | {:error, map}
   def insert(params) do
-    params = Map.put(params, "last_reply_id", Map.get(params, "user_id"))
-    insert_changeset(%Data.Thread{}, params)
-    |> Repo.insert
-    |> remove_associations
-    |> Data.Util.process_insert_or_update
-  end
+    Repo.transaction(fn ->
+      params = Map.put(params, "last_reply_id", Map.get(params, "user_id"))
+      {:ok, thread} = insert_changeset(%Data.Thread{}, params)
+      |> Repo.insert
 
-  # update thread for user permission
-  @spec user_update(map) :: {:ok, map} | {:error, map}
-  def user_update(params) do
-    id = Map.get(params, "id")
-    user_id = Map.get(params, "user_id")
-
-    if is_nil(id) || is_nil(user_id) do
-      {:error, "Invalid thread"}
-    else
-      Repo.get_by(Data.Thread, %{id: id, user_id: user_id})
-      |> process_user_update(params)
-    end
+      {:ok, _} = Repo.insert(%Data.Reply{
+          thread_id: Map.get(thread, :id),
+          content: Map.get(params, "content"),
+          user_id: Map.get(params, "user_id")
+        })
+      "ok"
+    end)
   end
 
   # this doesn't update the 'updated_at' field which is what we want
@@ -119,14 +102,6 @@ defmodule MyApp.Data.Thread do
   end
 
   # TODO: delete thread
-
-  defp process_user_update(thread, _params) when is_nil(thread), do: {:error, "Invalid thread"}
-  defp process_user_update(thread, params) when not is_nil(thread) do
-    user_update_changeset(thread, params)
-    |> Repo.update
-    |> remove_associations
-    |> Data.Util.process_insert_or_update
-  end
 
   defp remove_associations({err, data}), do: {err, Map.drop(data, [:user, :replies, :last_reply])}
 

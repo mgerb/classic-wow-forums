@@ -11,7 +11,7 @@ defmodule MyApp.Data.Reply do
     field :thread_id, :integer # references :thread
     field :content, :string
     field :edited, :boolean, default: false
-    field :quote, :boolean, default: false
+    field :quote_id, :integer
     timestamps()
   end
 

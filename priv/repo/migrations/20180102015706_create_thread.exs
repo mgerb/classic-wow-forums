@@ -5,10 +5,9 @@ defmodule MyApp.Repo.Migrations.CreateThread do
     create table(:thread) do
       add :title, :string
       add :category_id, :integer
-      add :content, :string, size: 2000
       add :view_count, :integer
       add :user_id, references(:user)
-      add :last_reply_id, :integer # TODO: figure this out
+      add :last_reply_id, :integer
       add :sticky, :boolean
       add :locked, :boolean
       add :edited, :boolean
