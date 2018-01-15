@@ -3,7 +3,7 @@ defmodule MyApp.Repo.Migrations.CreateThread do
 
   def change do
     create table(:thread) do
-      add :title, :string
+      add :title, :string, size: 300
       add :category_id, :integer
       add :view_count, :integer
       add :user_id, references(:user)

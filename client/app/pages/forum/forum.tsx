@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { get } from 'lodash';
 import { inject, observer } from 'mobx-react';
 import { ThreadService } from '../../services';
 import { Editor, ForumNav, LoginButton, ScrollToTop } from '../../components';
@@ -107,10 +106,13 @@ export class Forum extends React.Component<Props, State> {
         <div className={`forum-row ${index % 2 === 0 && 'forum-row--dark'}`} key={index}>
           {this.renderCell('flag', { maxWidth: '50px' })}
           {this.renderCell(<Link to={`/f/${categoryId}/${thread.id}`}>{thread.title}</Link>, { minWidth: '200px' })}
-          {this.renderCell(<b>{thread.user.battletag}</b>, { maxWidth: '150px' })}
+          {this.renderCell(<b>{thread.user.character_name || thread.user.battletag}</b>, { maxWidth: '150px' })}
           {this.renderCell(<b>{thread.reply_count}</b>, { maxWidth: '150px' }, true)}
           {this.renderCell(<b>{thread.view_count}</b>, { maxWidth: '150px' }, true)}
-          {this.renderCell(<span>by <b>{get(thread, 'last_reply.battletag')}</b></span>, { maxWidth: '200px' })}
+          {this.renderCell(
+            <span>by <b>{thread.last_reply.character_name || thread.last_reply.battletag}</b></span>,
+            { maxWidth: '200px' },
+          )}
         </div>
       );
     });

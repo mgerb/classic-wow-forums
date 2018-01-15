@@ -1,9 +1,9 @@
 import { find, filter, get } from 'lodash';
 import { AvatarModel } from '../model';
 
-const getAvatar = (title: string): any => {
+const getAvatar = (title?: string): any => {
   const av = find(avatarList, { title });
-  return get(av, 'imageSrc');
+  return get(av, 'imageSrc') || avatarList[0].imageSrc;
 };
 
 const getClass = (index: number): {id: number, name: string; races: number[] } => {
@@ -66,6 +66,11 @@ const classList = [
 ];
 
 const avatarList: AvatarModel[] = [
+  {
+    raceId: 0,
+    title: 'unknown',
+    imageSrc: require('../assets/avatars/unknown.gif'),
+  },
   {
     raceId: 1,
     title: 'dwarf_f',

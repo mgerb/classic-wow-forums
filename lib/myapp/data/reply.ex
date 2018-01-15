@@ -12,12 +12,13 @@ defmodule MyApp.Data.Reply do
     field :content, :string
     field :edited, :boolean, default: false
     field :quote_id, :integer
-    timestamps()
+    has_one :user, Data.User, foreign_key: :id, references: :user_id
+    timestamps(type: :utc_datetime)
   end
 
   defp insert_changeset(reply, params \\ %{}) do
     reply
-    |> cast(params, [:user_id, :thread_id, :content, :quote])
+    |> cast(params, [:user_id, :thread_id, :content, :quote_id])
     |> validate_required([:user_id, :thread_id, :content])
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:thread_id)
@@ -33,10 +34,11 @@ defmodule MyApp.Data.Reply do
 
   @spec insert(map) :: {:ok, map} | {:error, map}
   def insert(params) do
-    insert_changeset(%Data.Reply{}, params)
+    {:ok, data} = insert_changeset(%Data.Reply{}, params)
     |> Repo.insert
     |> Data.Util.process_insert_or_update
     |> update_thread_new_reply
+    {:ok, Map.drop(data, [:user])} # drop user because we can't encode it if it's not preloaded
   end
 
   defp update_thread_new_reply({:error, error}), do: {:error, error}

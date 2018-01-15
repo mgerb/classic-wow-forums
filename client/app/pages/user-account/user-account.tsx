@@ -177,7 +177,7 @@ export class UserAccount extends React.Component<Props, State> {
     return (
       <ScrollToTop>
         <ContentContainer style={{ minHeight: '500px', paddingTop: '40px' }}>
-          <div className="flex">
+          <div className="flex" style={{ marginBottom: '20px' }}>
             {character_avatar && <Portrait imageSrc={CharacterService.getAvatar(character_avatar!)}/>}
             <div style={{ paddingLeft: '10px' }}>
               {battletag && <div><b>Battletag: </b>{battletag}</div>}

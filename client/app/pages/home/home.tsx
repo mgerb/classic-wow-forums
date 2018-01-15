@@ -122,7 +122,7 @@ export class Home extends React.Component<Props, State> {
               {this.renderTopic(139, 'Bug Report Forum', bugs, `Found a bug on this site? Help us squash it by reporting it here!`)}
             </div>
 
-            <hr />
+            <hr className="hr"/>
 
             <div className="topic-row topic-row__classes">
               <div className="topic-item topic-item__classes">
@@ -193,7 +193,7 @@ export class Home extends React.Component<Props, State> {
             </div>
           </div>
 
-          <hr />
+          <hr className="hr"/>
         </ContentContainer>
       </ScrollToTop>
     );

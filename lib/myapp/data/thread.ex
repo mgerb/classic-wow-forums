@@ -15,11 +15,11 @@ defmodule MyApp.Data.Thread do
     field :sticky, :boolean, default: false
     field :locked, :boolean, default: false
     field :edited, :boolean, default: false
-    field :reply_count, :integer, default: 1
+    field :reply_count, :integer, default: 0
     has_many :replies, Data.Reply
     has_one :user, Data.User, foreign_key: :id, references: :user_id
     has_one :last_reply, Data.User, foreign_key: :id, references: :last_reply_id
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   defp insert_changeset(thread, params \\ %{}) do
@@ -39,7 +39,7 @@ defmodule MyApp.Data.Thread do
   def get(thread_id) do
     query = from t in Data.Thread,
       where: t.id == ^thread_id,
-      preload: [:user, :last_reply, :replies]
+      preload: [:user, :last_reply, replies: :user]
 
     Repo.one(query)
     |> process_get
@@ -79,18 +79,20 @@ defmodule MyApp.Data.Thread do
 
   @spec insert(map) :: {:ok, map} | {:error, map}
   def insert(params) do
-    Repo.transaction(fn ->
+    {_, data} = Repo.transaction(fn ->
       params = Map.put(params, "last_reply_id", Map.get(params, "user_id"))
       {:ok, thread} = insert_changeset(%Data.Thread{}, params)
       |> Repo.insert
 
-      {:ok, _} = Repo.insert(%Data.Reply{
+      {:ok, data} = Repo.insert(%Data.Reply{
           thread_id: Map.get(thread, :id),
           content: Map.get(params, "content"),
           user_id: Map.get(params, "user_id")
         })
-      "ok"
+      # return the new thread we inserted - drop associations because we don't load them
+      {:ok, Map.drop(thread, [:last_reply, :replies, :user])}
     end)
+    data
   end
 
   # this doesn't update the 'updated_at' field which is what we want

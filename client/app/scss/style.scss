@@ -1,4 +1,5 @@
 $fontPrimary: #cccccc;
+$linkColor: #FFB019;
 
 html {
   font-family: Arial,Helvetica,Sans-Serif;
@@ -19,7 +20,7 @@ body {
 }
 
 a {
-  color: #FFB019;
+  color: $linkColor;
   font-weight: bold;
   font-size: 9pt;
   text-decoration: underline;
@@ -35,6 +36,20 @@ a {
 }
 
 hr {
+  size: 1;
+  background-color: #9E9E9E;
+  display: block;
+  unicode-bidi: isolate;
+  -webkit-margin-before: 0.5em;
+  -webkit-margin-after: 0.5em;
+  -webkit-margin-start: auto;
+  -webkit-margin-end: auto;
+  overflow: hidden;
+  border: none;
+  height: 1px;
+}
+
+.hr {
   background: rgb(71, 71, 71);
   width: 80%;
   height: 0.5px;
@@ -42,6 +57,10 @@ hr {
   margin: 25px auto;
   display: block;
   clear: both;
+}
+
+h1, h2, h3, h4, h5, p {
+  margin-top: 0;
 }
 
 .inline-block {
@@ -57,6 +76,10 @@ hr {
 
   &--wrap {
     flex-wrap: wrap;
+  }
+  
+  &--column {
+    flex-direction: column;
   }
 }
 
@@ -88,5 +111,19 @@ span.grey {
 
   &:focus {
     outline: none;
+  }
+
+  &__button {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    color: $linkColor;
+    font-weight: bold;
+    font-size: 9pt;
+    cursor: pointer;
+
+    &:hover {
+      color: white;
+    }
   }
 }

@@ -5,15 +5,17 @@ import { ContentContainer } from '../content-container/content-container';
 import './editor.scss';
 
 interface Props {
-  categoryId: string;
+  categoryId?: string;
   onClose: (cancel: boolean) => any;
+  threadId?: string;
 }
 
 interface State {
   title: string;
   content: string;
   contentPreview: string;
-  characterCount: number;
+  contentCharacterCount: number;
+  titleCharacterCount: number;
   errorMessage?: string;
 }
 
@@ -24,7 +26,8 @@ export class Editor extends React.Component<Props, State> {
       title: '',
       content: '',
       contentPreview: '',
-      characterCount: 0,
+      contentCharacterCount: 0,
+      titleCharacterCount: 0,
     };
   }
 
@@ -32,12 +35,48 @@ export class Editor extends React.Component<Props, State> {
     this.setState({ 
       content: event.target.value,
       contentPreview: marked(event.target.value, { sanitize: true }),
-      characterCount: event.target.value.length,
+      contentCharacterCount: event.target.value.length,
     });
   }
 
-  onSubmit() {
+  onTitleChange(event: any) {
+    this.setState({
+      title: event.target.value,
+      titleCharacterCount: event.target.value.length,
+    });
+  }
 
+  onSubmit(event: any) {
+    event.preventDefault();
+    if (this.props.threadId) {
+      this.newReply();
+    } else {
+      this.newThread();
+    }
+  }
+
+  async newReply() {
+    const { content } = this.state;
+
+    if (content === '') {
+      this.setState({ errorMessage: 'Content must not be blank.' });
+      return;
+    }
+
+    const data = {
+      content,
+      thread_id: this.props.threadId,
+    };
+
+    try {
+      await axios.post('/api/reply', data);
+      this.props.onClose(false);
+    } catch (e) {
+      this.setState({ errorMessage: 'Server error. Please try again later.' });
+    }
+  }
+
+  async newThread() {
     const { title, content } = this.state;
 
     if (title === '' || content === '') {
@@ -51,10 +90,6 @@ export class Editor extends React.Component<Props, State> {
       category_id: this.props.categoryId,
     };
 
-    this.newThread(data);
-  }
-
-  async newThread(data: any) {
     try {
       await axios.post('/api/thread', data);
       this.props.onClose(false);
@@ -63,25 +98,46 @@ export class Editor extends React.Component<Props, State> {
     }
   }
 
+  renderThreadPortion() {
+    return (
+      <div className="flex flex--column">
+        <h2 style={{ color: 'white' }}>New Topic</h2>
+        <label>Title</label>
+        <input type="text"
+          className="input editor__title"
+          onChange={event => this.onTitleChange(event)}
+          maxLength={300}/>
+        <div className="editor__character-count">{this.state.contentCharacterCount}/2000</div>
+      </div>
+    );
+  }
+
+  // TODO: quote
+  renderReplyPortion() {
+    return (
+      <h2 style={{ color: 'white' }}>New Reply</h2>
+    );
+  }
+
   render() {
 
     return (
       <div className="editor-container">
-        <ContentContainer className="editor">
-          <h2 style={{ color: 'white' }}>New Topic</h2>
-          <label>Title</label>
-          <input type="text" className="input editor__title" onChange={event => this.setState({ title: event.target.value })}/>
-          <label>Content</label>
-          <textarea className="input editor__text-area flex-1" onChange={event => this.onContentChange(event)}/>
-          <label>Content Preview</label>
-          <div className="editor__preview flex-1" dangerouslySetInnerHTML={{ __html: this.state.contentPreview }}></div>
-          <div className="editor__submit">
-            <a onClick={() => this.onSubmit()}>Submit</a>
-            <a onClick={() => this.props.onClose(true)} style={{ marginLeft: '10px' }}>Cancel</a>
-            <span className="editor__error-message">{this.state.errorMessage}</span>
-            <span style={{ float: 'right' }}>{this.state.characterCount}/2000</span>
-          </div>
-        </ContentContainer>
+        <form onSubmit={event => this.onSubmit(event)} onReset={() => this.props.onClose(true)}>
+          <ContentContainer className="editor">
+            {this.props.threadId ? this.renderReplyPortion() : this.renderThreadPortion()}
+            <label>Content</label>
+            <textarea className="input editor__text-area flex-1" onChange={event => this.onContentChange(event)} maxLength={2000}/>
+            <div className="editor__character-count">{this.state.contentCharacterCount}/2000</div>
+            <label>Preview</label>
+            <div className="editor__preview flex-1" dangerouslySetInnerHTML={{ __html: this.state.contentPreview }}></div>
+            <div className="editor__submit">
+              <input type="submit" value="Submit" className="input__button"/>
+              <input type="reset" value="Cancel" className="input__button" style={{ marginLeft: '10px' }}/>
+              <span className="editor__error-message">{this.state.errorMessage}</span>
+            </div>
+          </ContentContainer>
+        </form>
       </div>
     );
   }

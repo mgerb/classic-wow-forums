@@ -15,7 +15,7 @@ defmodule MyApp.Data.User do
     field :character_class, :string
     field :character_realm, :string
     field :character_avatar, :string
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   defp changeset(user, params \\ %{}) do

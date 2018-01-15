@@ -2,14 +2,16 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { get, map } from 'lodash';
 import marked from 'marked';
-import { ThreadService } from '../../services';
-import { Portrait, ScrollToTop } from '../../components';
-import { ThreadModel } from '../../model';
+import { DateTime } from 'luxon';
+import { CharacterService, ThreadService } from '../../services';
+import { Editor, Portrait, ScrollToTop } from '../../components';
+import { ReplyModel, ThreadModel } from '../../model';
 import './thread.scss';
 
 interface Props extends RouteComponentProps<any> {}
 
 interface State {
+  showEditor: boolean;
   thread?: ThreadModel;
 }
 
@@ -17,41 +19,89 @@ export class Thread extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      showEditor: false,
+    };
   }
 
   componentDidMount() {
-    this.getThreads();
+    this.getReplies();
   }
 
-  private async getThreads() {
+  private async getReplies() {
     const thread = await ThreadService.getThread(this.props.match.params['threadId']);
-    thread.replies = map([thread as any, ...thread.replies], (reply) => { // add the thread topic to the front of the list
+    thread.replies = map(thread.replies, (reply) => { // add the thread topic to the front of the list
       reply.content = marked(reply.content, { sanitize: true });
       return reply;
     });
     this.setState({ thread });
   }
 
+  private onReplyClick() {
+    this.setState({ showEditor: true });
+  }
+
+  private onQuoteClick(reply: ReplyModel) {
+    console.log(reply);
+  }
+
+  private onEditorClose(cancel: boolean) {
+    this.setState({ showEditor: false });
+    if (!cancel) {
+      this.getReplies();
+    }
+  }
+
+  private navigateForumIndex() {
+    this.props.history.push(`/f/${this.state.thread!.category_id}`);
+  }
+
+  private getTimeFormat(dateTime: string) {
+    return DateTime.fromISO(dateTime).toLocaleString({
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZoneName: 'short',
+    });
+  }
+
+  renderUserInfo(reply: ReplyModel) {
+    const { battletag, character_avatar, character_class, character_guild, character_name, character_realm } = reply.user;
+    return (
+      <div className="reply__user-container">
+        <Portrait imageSrc={CharacterService.getAvatar(character_avatar)}/>
+        <div style={{ textAlign: 'center' }}>
+          <div className="character-name">{character_name || battletag}</div>
+          {character_class && <div><small>{character_class}</small></div>}
+          {character_guild && <div><small><b>Guild: </b>{character_guild}</small></div>}
+          {character_realm && <div><small><b>Realm: </b>{character_realm}</small></div>}
+        </div>
+      </div>
+    );
+  }
+
   renderReplies(): any {
     return this.state.thread!.replies.map((reply, index) => {
+      const replyDark = index % 2 === 0 ? 'reply--dark' : '';
       return (
         <div className="reply-container" key={index}>
-          <div className="reply">
-            <div className="reply__user-container">
-              <Portrait imageSrc={require('../../assets/Tyren.gif')}/>
-              <div>Tyren</div>
-              <div>Blizzard Poster</div>
-            </div>
+          <div className={`reply ${replyDark}`}>
+            {this.renderUserInfo(reply)}
             <div className="flex-1">
               <div className="reply__title">
                 <div>
-                  <b>{`${index + 1}. `}{this.state.thread!.title}</b>
-                  <small style={{ paddingLeft: '5px' }}>| {reply.inserted_at}</small>
+                  <b>{`${index + 1}. `}{index > 0 && 'Re: '}{this.state.thread!.title}</b>
+                  <small style={{ paddingLeft: '5px' }}>| {this.getTimeFormat(reply.inserted_at)}</small>
                 </div>
                 <div>
-                  <img src={require('../../assets/quote-button.gif')} className="reply__title__button"/>
-                  <img src={require('../../assets/reply-button.gif')} className="reply__title__button"/>
+                  <img src={require('../../assets/quote-button.gif')}
+                    className="reply__title__button"
+                    onClick={() => this.onQuoteClick(reply)}/>
+                  <img src={require('../../assets/reply-button.gif')}
+                    className="reply__title__button"
+                    onClick={() => this.onReplyClick()}/>
                 </div>
               </div>
               <div className="reply__content" dangerouslySetInnerHTML={{ __html: reply.content }}/>
@@ -62,22 +112,23 @@ export class Thread extends React.Component<Props, State> {
     });
   }
 
-  private navigateForumIndex() {
-    this.props.history.push(`/f/${this.state.thread!.category_id}`);
-  }
-
   render() {
+
+    if (!this.state.thread) {
+      return <div></div>;
+    }
 
     const replies = get(this.state, 'thread.replies');
 
     return (
       <ScrollToTop {...this.props}>
-
+        {this.state.showEditor && <Editor threadId={this.props.match.params['threadId']} onClose={cancel => this.onEditorClose(cancel)}/>}
         <div className="topic-bg">
           <div className="threadTopic-container">
             <div className="threadTopic">
               <img src={require('../../assets/sticky.gif')} style={{ marginRight: '5px' }}/>
-              <b>Topic: </b><small style={{ paddingLeft: '15px', color: 'white' }}>| 12/20/2005 1:11:44 AM PST</small>
+              <b>Topic: </b>
+              <small style={{ paddingLeft: '15px', color: 'white' }}>| {this.getTimeFormat(this.state.thread!.inserted_at)}</small>
             </div>
           </div>
           <img src={require('../../assets/forum-index.gif')}

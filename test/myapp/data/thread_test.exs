@@ -13,18 +13,19 @@ defmodule MyApp.Data.ThreadTest do
   end
 
   test "insert: try to insert with no parameters" do
-    assert insert(%{}) == {:error,
-    [%{title: "can't be blank"}, %{category_id: "can't be blank"},
-     %{content: "can't be blank"}, %{user_id: "can't be blank"}]}
+    {error, _} = catch_error(insert(%{}))
+    assert error == :badmatch
   end
 
   test "insert: insert as invalid user" do
-    assert insert(new_thread(9238748)) == {:error, [%{user_id: "does not exist"}]}
+    {:badmatch, {:error, data}} = catch_error(insert(new_thread(9238748)))
+    assert data.errors == [user_id: {"does not exist", []}]
   end
 
   test "insert: insert as invalid category_id" do
     {:ok, user} = new_user()
-    assert insert(new_thread(user.id, 2342342343)) == {:error, [%{category_id: "does not exist"}]}
+    {error, _} = catch_error(insert(new_thread(user.id, 2342342343)))
+    assert error == :badmatch
   end
 
   test "new thread should be inserted" do
@@ -33,7 +34,6 @@ defmodule MyApp.Data.ThreadTest do
     assert thread.title == "test title"
     assert thread.category_id == 1
     assert thread.user_id == user.id
-    assert thread.content == "test content"
   end
 
   # TODO: update thread

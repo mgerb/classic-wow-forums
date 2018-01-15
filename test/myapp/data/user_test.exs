@@ -41,6 +41,11 @@ defmodule MyApp.Data.UserTest do
       battletag: "mgerb",
       id: user.id,
       permissions: "user",
+      character_avatar: nil,
+      character_class: nil,
+      character_guild: nil,
+      character_name: nil,
+      character_realm: nil,
     }
 
   end

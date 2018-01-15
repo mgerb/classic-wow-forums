@@ -4,6 +4,7 @@ import { Portrait } from '../portrait/portrait';
 import { UserStore } from '../../stores/user-store';
 import { CharacterService } from '../../services';
 import { Oauth } from '../../util';
+import './login-button.scss';
 
 interface Props {
   className?: string;
@@ -24,7 +25,7 @@ export class LoginButton extends React.Component<Props, State> {
   renderPortrait() {
     const avatarSrc = CharacterService.getAvatar(this.props.userStore!.user!.character_avatar!);
     return (
-      <div style={{ padding: '10px' }}>
+      <div className="portrait-container">
         <div onClick={() => this.props.onNavigate('/user-account')} style={{ cursor: 'pointer' }}>
           {avatarSrc && <Portrait imageSrc={avatarSrc}/>}
         </div>

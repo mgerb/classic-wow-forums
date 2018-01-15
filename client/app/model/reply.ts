@@ -1,4 +1,6 @@
-export interface RepyModel {
+import { UserModel } from './user';
+
+export interface ReplyModel {
   content: string;
   edited: boolean;
   id: number;
@@ -7,4 +9,5 @@ export interface RepyModel {
   thread_id: number;
   updated_at: string;
   user_id: number;
+  user: UserModel;
 }
