@@ -1,4 +1,4 @@
-.editor-container {
+.editor-background {
   z-index: 1;
   top: 0;
   left: 0;
@@ -6,43 +6,48 @@
   width: 100%;
   position: fixed;
   background-color: rgba(0, 0, 0, .9);
-  padding-top: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.editor-container {
+  height: 100%;
+  width: 100%;
+  max-height: 800px;
+  max-width: 1000px;
+  padding: 20px 40px 40px;
+  margin-bottom: 0;
 }
 
 .editor {
-  height: 80%;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 40px;
-
-  &__character-count {
-    align-self: flex-end;
-  }
+  overflow-y: auto;
+  height: 100%;
+  margin-bottom: 0;
 
   &__title {
     height: 25px;
+    margin-bottom: 10px;
   }
 
   &__text-area {
     min-height: 100px;
-    resize: none;
+    max-height: 300px;
+    max-width: 100%;
     overflow-wrap: break-word;
   }
 
   &__preview {
-    min-height: 100px;
-    border-radius: 2px;
-    padding: 5px 10px;
-    overflow-y: auto;
-    overflow-wrap: break-word;
+    padding: 10px;
   }
 
   &__submit {
-    padding: 20px 0;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
   }
 
   &__error-message {
-    margin-left: 10px;
+    margin-bottom: 10px;
     color: red;
   }
 }

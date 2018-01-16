@@ -1,12 +1,15 @@
 import React from 'react';
 import marked from 'marked';
+import { get } from 'lodash';
 import axios from '../../axios/axios';
 import { ContentContainer } from '../content-container/content-container';
+import { ReplyModel } from '../../model';
 import './editor.scss';
 
 interface Props {
   categoryId?: string;
   onClose: (cancel: boolean) => any;
+  quotedReply?: ReplyModel;
   threadId?: string;
 }
 
@@ -15,11 +18,14 @@ interface State {
   content: string;
   contentPreview: string;
   contentCharacterCount: number;
-  titleCharacterCount: number;
   errorMessage?: string;
 }
 
 export class Editor extends React.Component<Props, State> {
+
+  private titleRef: any;
+  private contentRef: any;
+
   constructor(props: any) {
     super(props);
     this.state = {
@@ -27,8 +33,22 @@ export class Editor extends React.Component<Props, State> {
       content: '',
       contentPreview: '',
       contentCharacterCount: 0,
-      titleCharacterCount: 0,
     };
+  }
+
+  // disable scrolling in the background
+  componentDidMount() {
+    document.body.style.overflow = 'hidden';
+
+    if (this.titleRef) {
+      this.titleRef.focus();
+    } else {
+      this.contentRef.focus();
+    }
+  }
+
+  componentWillUnmount() {
+    document.body.style.removeProperty('overflow');
   }
 
   onContentChange(event: any) {
@@ -42,7 +62,6 @@ export class Editor extends React.Component<Props, State> {
   onTitleChange(event: any) {
     this.setState({
       title: event.target.value,
-      titleCharacterCount: event.target.value.length,
     });
   }
 
@@ -66,6 +85,7 @@ export class Editor extends React.Component<Props, State> {
     const data = {
       content,
       thread_id: this.props.threadId,
+      quote_id: get(this.props, 'quotedReply.id') || undefined,
     };
 
     try {
@@ -98,46 +118,61 @@ export class Editor extends React.Component<Props, State> {
     }
   }
 
-  renderThreadPortion() {
+  private renderTopicInput(): any {
     return (
-      <div className="flex flex--column">
-        <h2 style={{ color: 'white' }}>New Topic</h2>
-        <label>Title</label>
+      <div>
+        <div><label>Title</label></div>
         <input type="text"
+          ref={ref => this.titleRef = ref}
           className="input editor__title"
           onChange={event => this.onTitleChange(event)}
           maxLength={300}/>
-        <div className="editor__character-count">{this.state.contentCharacterCount}/2000</div>
       </div>
     );
   }
 
-  // TODO: quote
-  renderReplyPortion() {
-    return (
-      <h2 style={{ color: 'white' }}>New Reply</h2>
+  renderQuotedReply() {
+    return (this.props.quotedReply &&
+      <blockquote className="blockquote">
+        <small>Q u o t e:</small>
+        <small dangerouslySetInnerHTML={{ __html: marked(this.props.quotedReply!.content, { sanitize: true }) }}/>
+      </blockquote>
     );
   }
 
   render() {
-
     return (
-      <div className="editor-container">
-        <form onSubmit={event => this.onSubmit(event)} onReset={() => this.props.onClose(true)}>
-          <ContentContainer className="editor">
-            {this.props.threadId ? this.renderReplyPortion() : this.renderThreadPortion()}
-            <label>Content</label>
-            <textarea className="input editor__text-area flex-1" onChange={event => this.onContentChange(event)} maxLength={2000}/>
-            <div className="editor__character-count">{this.state.contentCharacterCount}/2000</div>
-            <label>Preview</label>
-            <div className="editor__preview flex-1" dangerouslySetInnerHTML={{ __html: this.state.contentPreview }}></div>
+      <div className="editor-background">
+        <ContentContainer className="editor-container">
+          <form className="editor" onSubmit={event => this.onSubmit(event)} onReset={() => this.props.onClose(true)}>
+
+            <h2 style={{ color: 'white' }}>New {this.props.threadId ? 'Reply' : 'Topic'}</h2>
+            {!this.props.threadId && this.renderTopicInput()}
+
+            <div><label>Content</label></div>
+            <textarea className="input editor__text-area flex-1"
+              onChange={event => this.onContentChange(event)} maxLength={2000}
+              ref={ref => this.contentRef = ref}
+            />
+
             <div className="editor__submit">
-              <input type="submit" value="Submit" className="input__button"/>
-              <input type="reset" value="Cancel" className="input__button" style={{ marginLeft: '10px' }}/>
-              <span className="editor__error-message">{this.state.errorMessage}</span>
+              <div>
+                <input type="submit" value="Submit" className="input__button"/>
+                <input type="reset" value="Cancel" className="input__button" style={{ marginLeft: '10px' }}/>
+              </div>
+              <div>{this.state.contentCharacterCount}/2000</div>
             </div>
-          </ContentContainer>
-        </form>
+
+            <div className="editor__error-message">{this.state.errorMessage}</div>
+
+            <div><label>Preview</label></div>
+            <div className="markdown-container">
+              {this.renderQuotedReply()}
+              <div className="editor__preview" dangerouslySetInnerHTML={{ __html: this.state.contentPreview }}></div>
+            </div>
+
+          </form>
+        </ContentContainer>
       </div>
     );
   }

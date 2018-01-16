@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { get, map } from 'lodash';
+import { get, find, map } from 'lodash';
 import marked from 'marked';
 import { DateTime } from 'luxon';
 import { CharacterService, ThreadService } from '../../services';
@@ -11,6 +11,7 @@ import './thread.scss';
 interface Props extends RouteComponentProps<any> {}
 
 interface State {
+  quotedReply?: ReplyModel;
   showEditor: boolean;
   thread?: ThreadModel;
 }
@@ -31,7 +32,6 @@ export class Thread extends React.Component<Props, State> {
   private async getReplies() {
     const thread = await ThreadService.getThread(this.props.match.params['threadId']);
     thread.replies = map(thread.replies, (reply) => { // add the thread topic to the front of the list
-      reply.content = marked(reply.content, { sanitize: true });
       return reply;
     });
     this.setState({ thread });
@@ -42,11 +42,17 @@ export class Thread extends React.Component<Props, State> {
   }
 
   private onQuoteClick(reply: ReplyModel) {
-    console.log(reply);
+    this.setState({
+      showEditor: true,
+      quotedReply: reply,
+    });
   }
 
   private onEditorClose(cancel: boolean) {
-    this.setState({ showEditor: false });
+    this.setState({
+      showEditor: false,
+      quotedReply: undefined,
+    });
     if (!cancel) {
       this.getReplies();
     }
@@ -65,6 +71,16 @@ export class Thread extends React.Component<Props, State> {
       minute: '2-digit',
       timeZoneName: 'short',
     });
+  }
+
+  private renderQuotedReply(reply: ReplyModel) {
+    const quotedReply = find(this.state.thread!.replies, { id: reply.quote_id });
+    return (quotedReply &&
+      <blockquote className="blockquote">
+        <small>Q u o t e:</small>
+        <small dangerouslySetInnerHTML={{ __html: marked(quotedReply.content, { sanitize: true }) }}/>
+      </blockquote>
+    );
   }
 
   renderUserInfo(reply: ReplyModel) {
@@ -90,6 +106,7 @@ export class Thread extends React.Component<Props, State> {
           <div className={`reply ${replyDark}`}>
             {this.renderUserInfo(reply)}
             <div className="flex-1">
+
               <div className="reply__title">
                 <div>
                   <b>{`${index + 1}. `}{index > 0 && 'Re: '}{this.state.thread!.title}</b>
@@ -104,7 +121,12 @@ export class Thread extends React.Component<Props, State> {
                     onClick={() => this.onReplyClick()}/>
                 </div>
               </div>
-              <div className="reply__content" dangerouslySetInnerHTML={{ __html: reply.content }}/>
+
+              <div className="reply__content markdown-container">
+                {this.renderQuotedReply(reply)}
+                <div dangerouslySetInnerHTML={{ __html: marked(reply.content, { sanitize: true }) }}/>
+              </div>
+
             </div>
           </div>
         </div>
@@ -122,7 +144,12 @@ export class Thread extends React.Component<Props, State> {
 
     return (
       <ScrollToTop {...this.props}>
-        {this.state.showEditor && <Editor threadId={this.props.match.params['threadId']} onClose={cancel => this.onEditorClose(cancel)}/>}
+        {this.state.showEditor &&
+          <Editor threadId={this.props.match.params['threadId']}
+            onClose={cancel => this.onEditorClose(cancel)}
+            quotedReply={this.state.quotedReply}
+          />
+        }
         <div className="topic-bg">
           <div className="threadTopic-container">
             <div className="threadTopic">

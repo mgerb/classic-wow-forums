@@ -123,9 +123,37 @@ span.grey {
     font-weight: bold;
     font-size: 9pt;
     cursor: pointer;
+    padding: 0;
 
     &:hover {
       color: white;
     }
+  }
+}
+
+.blockquote {
+  margin: 14px 40px 40px;
+  padding: 5px;
+  color: #ffffff;
+  border-top: 1px solid grey;
+  border-bottom: 1px solid grey;
+  word-break: break-word;
+
+  small :last-child {
+    margin-bottom: 0;
+  }
+}
+
+div {
+  box-sizing: border-box;
+}
+
+.markdown-container {
+  overflow-wrap: break-word;
+  word-break: break-word;
+
+  img {
+    max-width: 100%;
+    height: auto;
   }
 }
