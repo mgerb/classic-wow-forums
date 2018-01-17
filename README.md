@@ -19,12 +19,11 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
 - `mix ecto.migrate`
 
 ## Production
-Running app
-`PORT=80 MIX_ENV=prod mix phx.server`
 
-- when creating prod database
-  - `MIX_ENV=prod mix ecto.create`
-  - `MIX_ENV=prod mix ecto.migrate`
+- `MIX_ENV=prod mix ecto.create`
+- `MIX_ENV=prod mix ecto.migrate`
+- `PORT=80 MIX_ENV=prod mix run priv/repo/seeds.exs`
+- `PORT=80 MIX_ENV=prod mix phx.server`
 
 # Installing Elixir on C9
 ```

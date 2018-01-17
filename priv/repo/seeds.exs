@@ -208,4 +208,3 @@ Enum.each(accounts, fn (user) ->
 
   end)
 end)
-
