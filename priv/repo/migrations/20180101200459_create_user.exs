@@ -4,13 +4,13 @@ defmodule MyApp.Repo.Migrations.CreateUser do
   def change do
     create table(:user) do
       add :battle_net_id, :integer
-      add :battletag, :string
+      add :battletag, :string, size: 50
       add :permissions, :string
-      add :character_guild, :string
-      add :character_name, :string
-      add :character_class, :string
-      add :character_realm, :string
-      add :character_avatar, :string
+      add :character_guild, :string, size: 50
+      add :character_name, :string, size: 50
+      add :character_class, :string, size: 15
+      add :character_realm, :string, size: 50
+      add :character_avatar, :string, size: 20
 
       # for admin purposes
       add :username, :string
