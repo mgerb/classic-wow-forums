@@ -24,6 +24,7 @@ defmodule MyAppWeb.Router do
 
     scope "/user" do
       post "/authorize", UserController, :authorize
+      post "/login", UserController, :login
 
       pipe_through [:user_auth]
       get "/characters", UserController, :characters

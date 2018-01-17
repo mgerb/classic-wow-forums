@@ -11,6 +11,10 @@ defmodule MyApp.Repo.Migrations.CreateUser do
       add :character_class, :string
       add :character_realm, :string
       add :character_avatar, :string
+
+      # for admin purposes
+      add :username, :string
+      add :password, :string
       timestamps()
     end
 

@@ -194,3 +194,18 @@ Enum.each(Category.get_seed(), fn(cat) ->
     end
   end)
 end)
+
+# insert admin user
+accounts = Application.get_env(:myapp, :admin_accounts)
+
+Enum.each(accounts, fn (user) ->
+  Repo.transaction(fn ->
+    exists = Repo.get_by(Data.User, %{username: Map.get(user, "username")}) != nil
+
+    if !exists do
+      MyApp.Data.User.insert_admin_user(user)
+    end
+
+  end)
+end)
+

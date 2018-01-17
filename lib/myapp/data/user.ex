@@ -15,6 +15,10 @@ defmodule MyApp.Data.User do
     field :character_class, :string
     field :character_realm, :string
     field :character_avatar, :string
+
+    # for admin purposes
+    field :username, :string
+    field :password, :string
     timestamps(type: :utc_datetime)
   end
 
@@ -60,7 +64,7 @@ defmodule MyApp.Data.User do
 
     output = cond do
       is_nil(user) ->
-        insert_user(params)
+        insert_battlenet_user(params)
       true ->
         if Map.get(user, :battletag) != Map.get(params, "battletag") do
           update_battletag(user, params)
@@ -81,7 +85,7 @@ defmodule MyApp.Data.User do
     {:ok, Map.merge(user, %{access_token: access_token})}
   end
 
-  defp insert_user(params) do
+  defp insert_battlenet_user(params) do
     changeset(%Data.User{}, params)
     |> Repo.insert
     |> Data.Util.process_insert_or_update
@@ -99,5 +103,31 @@ defmodule MyApp.Data.User do
   # take certain values after insertion
   defp filter_values({:error, error}), do: {:error, error}
   defp filter_values({:ok, user}), do: {:ok, Map.take(user, [:id, :permissions, :battle_net_id, :battletag])}
+
+  def insert_admin_user(params) do
+    params = params
+    |> Map.put("password", Comeonin.Argon2.hashpwsalt(Map.get(params, "password")))
+
+    %Data.User{}
+    |> cast(params, [:username, :password, :permissions, :character_name, :character_avatar])
+    |> Repo.insert
+  end
+
+  def login(params) do
+    user = Repo.get_by(Data.User, username: Map.get(params, "username"))
+
+    if user do
+      case Comeonin.Argon2.checkpw(Map.get(params, "password"), user.password) do
+        false -> {:error, "invalid login"}
+        _ ->
+          user = user
+          |> Map.from_struct
+          |> Map.drop([:password, :__meta__])
+          {:ok, user}
+      end
+    else
+      {:error, "invalid login"}
+    end
+  end
 
 end

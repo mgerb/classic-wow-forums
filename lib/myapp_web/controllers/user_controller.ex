@@ -7,6 +7,19 @@ defmodule MyAppWeb.UserController do
 
   # https://us.battle.net/oauth/authorize?redirect_uri=https://localhost/api/battlenet/authorize&scope=wow.profile&client_id=vxqv32fddxsy6cmk6259amtymbuzmfrq&response_type=code
 
+  # this is for auth with username/password - currently only for admin
+  def login(conn, params) do
+    {output, status} = params
+    |> Data.User.login
+    |> Auth.Token.add_token_and_map_claims
+    |> Response.put_resp
+
+    conn
+    |> put_status(status)
+    |> Response.json(output)
+  end
+
+  # this is for authorization with battlenet
   @spec authorize(map, map) :: any
   def authorize(conn, %{"code" => code}) when not is_nil(code) do
 
