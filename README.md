@@ -25,6 +25,36 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
 - `PORT=80 MIX_ENV=prod mix run priv/repo/seeds.exs`
 - `PORT=80 MIX_ENV=prod mix phx.server`
 
+# Installing Elixir on Centos 7
+
+Update the system
+```
+sudo yum install epel-release
+sudo yum update
+sudo reboot
+```
+
+Install Erlang
+```
+wget https://packages.erlang-solutions.com/erlang/esl-erlang/FLAVOUR_1_general/esl-erlang_20.2.2-1~centos~7_amd64.rpm
+sudo rpm -Uvh ./esl-erlang_20.2.2-1~centos~7_amd64.rpm
+sudo yum install erlang
+```
+
+Install Elixir
+```
+mkdir -p /usr/bin/elixir
+sudo wget https://github.com/elixir-lang/elixir/releases/download/v1.5.2/Precompiled.zip
+sudo yum install unzip
+sudo unzip Precompiled.zip
+export PATH=$PATH:/usr/bin/elixir/bin
+```
+
+Might have to install GCC - needed for comonin/argon2
+```
+yum group install "Development Tools"
+```
+
 # Installing Elixir on C9
 ```
 # for some reason C9 complains this file is missing when it tries to remove couchdb
