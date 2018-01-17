@@ -163,7 +163,7 @@ export class Editor extends React.Component<Props, State> {
               <div>{this.state.contentCharacterCount}/2000</div>
             </div>
 
-            <div className="editor__error-message">{this.state.errorMessage}</div>
+            <div className="editor__error-message red">{this.state.errorMessage}</div>
 
             <div><label>Preview</label></div>
             <div className="markdown-container">

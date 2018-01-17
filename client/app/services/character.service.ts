@@ -151,6 +151,11 @@ const avatarList: AvatarModel[] = [
     title: 'undead_m',
     imageSrc: require('../assets/avatars/Undead_male.gif'),
   },
+  {
+    raceId: 0,
+    title: 'ordinn',
+    imageSrc: require('../assets/avatars/Ordinn.gif'),
+  },
 ];
 
 export const CharacterService = {

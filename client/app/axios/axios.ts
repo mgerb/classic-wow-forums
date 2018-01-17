@@ -29,9 +29,13 @@ export const initializeAxios = (): Promise<void> => {
         return config;
       },
       (error: any) => {
+        nprogress.done();
+        
         // if code is unauthorized (401) then logout if already logged in
         if (error.response.status === 401 && userStore.user) {
           userStore.resetUser();
+          // redirect back to home page upon logout
+          window.location.pathname = '/';
         }
 
         return Promise.reject(error);

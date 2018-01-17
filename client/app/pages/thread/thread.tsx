@@ -84,7 +84,7 @@ export class Thread extends React.Component<Props, State> {
   }
 
   renderUserInfo(reply: ReplyModel) {
-    const { battletag, character_avatar, character_class, character_guild, character_name, character_realm } = reply.user;
+    const { battletag, character_avatar, character_class, character_guild, character_name, character_realm, permissions } = reply.user;
     return (
       <div className="reply__user-container">
         <Portrait imageSrc={CharacterService.getAvatar(character_avatar)}/>
@@ -93,6 +93,7 @@ export class Thread extends React.Component<Props, State> {
           {character_class && <div><small>{character_class}</small></div>}
           {character_guild && <div><small><b>Guild: </b>{character_guild}</small></div>}
           {character_realm && <div><small><b>Realm: </b>{character_realm}</small></div>}
+          {permissions === 'admin' && <div className="blue">Admin Poster</div>}
         </div>
       </div>
     );
@@ -101,6 +102,7 @@ export class Thread extends React.Component<Props, State> {
   renderReplies(): any {
     return this.state.thread!.replies.map((reply, index) => {
       const replyDark = index % 2 === 0 ? 'reply--dark' : '';
+      const bluePost = reply.user.permissions === 'admin' ? 'blue-post' : '';
       return (
         <div className="reply-container" key={index}>
           <div className={`reply ${replyDark}`}>
@@ -124,7 +126,7 @@ export class Thread extends React.Component<Props, State> {
 
               <div className="reply__content markdown-container">
                 {this.renderQuotedReply(reply)}
-                <div dangerouslySetInnerHTML={{ __html: marked(reply.content, { sanitize: true }) }}/>
+                <div className={bluePost} dangerouslySetInnerHTML={{ __html: marked(reply.content, { sanitize: true }) }}/>
               </div>
 
             </div>

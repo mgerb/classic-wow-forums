@@ -6,12 +6,13 @@ import { CharacterService } from './character.service';
 
 // fetch user and store in local storage
 const authorize = async (code: string): Promise<void> => {
-  try {
-    const res = await axios.post('/api/user/authorize', { code });
-    userStore.setUser(res.data.data);
-  } catch (e) {
-    console.error(e);
-  }
+  const res = await axios.post('/api/user/authorize', { code });
+  userStore.setUser(res.data.data);
+};
+
+const login = async (username: string, password: string): Promise<any> => {
+  const res = await axios.post('/api/user/login', { username, password });
+  userStore.setUser(res.data.data);
 };
 
 const getCharacters = async (): Promise<any> => {
@@ -53,6 +54,7 @@ const saveCharacter = async (character: any): Promise<any> => {
   
 export const UserService = {
   authorize,
-  saveCharacter,
   getCharacters,
+  login,
+  saveCharacter,
 };

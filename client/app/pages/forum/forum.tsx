@@ -1,12 +1,15 @@
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
+import { orderBy } from 'lodash';
 import { ThreadService } from '../../services';
 import { Editor, ForumNav, LoginButton, ScrollToTop } from '../../components';
 import { ThreadModel } from '../../model';
 import { UserStore } from '../../stores/user-store';
 import './forum.scss';
 import { Oauth } from '../../util';
+
+const stickyImage = require('../../assets/sticky.gif');
 
 interface Props extends RouteComponentProps<any> {
   userStore: UserStore;
@@ -40,8 +43,13 @@ export class Forum extends React.Component<Props, State> {
   }
 
   private async getThreads(categoryId: string) {
-    const threads = await ThreadService.getCategoryThreads(categoryId);
+    let threads = await ThreadService.getCategoryThreads(categoryId);
+    threads = this.orderBy(threads);
     this.setState({ threads });
+  }
+
+  private orderBy(threads: ThreadModel[]) {
+    return orderBy(threads, ['sticky', 'updated_at'], ['desc', 'desc']);
   }
 
   onNewTopic() {
@@ -94,7 +102,7 @@ export class Forum extends React.Component<Props, State> {
 
   renderCell(content: JSX.Element | string, style: any, center?: boolean, header?: boolean) {
     let classNames: string = '';
-    classNames += center && ' forum-cell--center';
+    classNames += center ? ' forum-cell--center': '';
     classNames += header ? ' forum-cell--header' : ' forum-cell--body';
     return <div className={`forum-cell flex-1 ${classNames}`} style={style}>{content}</div>;
   }
@@ -102,15 +110,20 @@ export class Forum extends React.Component<Props, State> {
   renderThreadRows() {
     const categoryId = this.props.match.params['id'];
     return this.state.threads.map((thread, index) => {
+      const authorBluePost = thread.user.permissions === 'admin' ? 'blue' : '';
+      const lastReplyBluePost = thread.last_reply.permissions === 'admin' ? 'blue' : '';
+      const sticky = thread.sticky ? <img src={stickyImage} title="Sticky"/> : '';
       return (
         <div className={`forum-row ${index % 2 === 0 && 'forum-row--dark'}`} key={index}>
-          {this.renderCell('flag', { maxWidth: '50px' })}
+          {this.renderCell(sticky, { maxWidth: '50px' }, true)}
           {this.renderCell(<Link to={`/f/${categoryId}/${thread.id}`}>{thread.title}</Link>, { minWidth: '200px' })}
-          {this.renderCell(<b>{thread.user.character_name || thread.user.battletag}</b>, { maxWidth: '150px' })}
+          {this.renderCell(<b className={authorBluePost}>{thread.user.character_name || thread.user.battletag}</b>, { maxWidth: '150px' })}
           {this.renderCell(<b>{thread.reply_count}</b>, { maxWidth: '150px' }, true)}
           {this.renderCell(<b>{thread.view_count}</b>, { maxWidth: '150px' }, true)}
           {this.renderCell(
-            <span>by <b>{thread.last_reply.character_name || thread.last_reply.battletag}</b></span>,
+            <div style={{ fontSize: '8pt' }}>
+              by <b className={lastReplyBluePost}>{thread.last_reply.character_name || thread.last_reply.battletag}</b>
+            </div>,
             { maxWidth: '200px' },
           )}
         </div>

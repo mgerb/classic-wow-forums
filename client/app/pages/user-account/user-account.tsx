@@ -35,7 +35,10 @@ export class UserAccount extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.getCharacters();
+    // only load characters if user is battenet user
+    if (get(this.props, 'userStore.user.access_token')) {
+      this.getCharacters();
+    }
   }
 
   private selectedCharacter(): CharacterModel {
@@ -85,43 +88,6 @@ export class UserAccount extends React.Component<Props, State> {
     this.setState({ selectedAvatarIndex });
   }
 
-  renderDropDowns() {
-    if (!this.selectedCharacter()) {
-      return <div></div>;
-    }
-    return (
-      <div>
-        <h2>Set your default character</h2>
-        <div style={{ margin: '0 10px 10px 0', display: 'inline-block' }}>
-          <select value={this.selectedCharacter().realm}
-            onChange={event => this.onRealmSelect(event)}>
-            {map(this.state.characters, (_, realm: string) => {
-              return <option key={`realm${realm}`}>{realm}</option>;
-            })}
-          </select>
-          <select style={{ marginLeft: '5px' }}
-            onChange={event => this.onCharSelect(event)}>
-            {map(this.state.characters[this.state.selectedRealm!], (value, index) => {
-              return <option key={this.state.selectedRealm! + index} value={index}>{value.name}</option>;
-            })}
-          </select>
-        </div>
-
-        <a onClick={() => this.onSave()}>Save</a>
-        <div className="avatar-list">
-          {this.selectedCharacter().avatarList!.map((val, index) => {
-            const avatarClass = this.state.selectedAvatarIndex === index ? 'avatar-list__item--selected' : '';
-            return (
-              <div key={index} className={`avatar-list__item ${avatarClass}`} onClick={() => this.onAvatarSelect(index)}>
-                <img src={val.imageSrc}/>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-
   private async onSave() {
     const { name, guild, realm } = this.selectedCharacter();
     const selectedAvatar = this.selectedCharacter().avatarList![this.state.selectedAvatarIndex].title;
@@ -156,6 +122,43 @@ export class UserAccount extends React.Component<Props, State> {
           <li>Log out and back into Classic WoW Forums</li>
           <li>Grant Classic WoW Forums access to your WoW profile</li>
         </ul>
+      </div>
+    );
+  }
+
+  renderDropDowns() {
+    if (!this.selectedCharacter()) {
+      return <div></div>;
+    }
+    return (
+      <div>
+        <h2>Set your default character</h2>
+        <div style={{ margin: '0 10px 10px 0', display: 'inline-block' }}>
+          <select value={this.selectedCharacter().realm}
+            onChange={event => this.onRealmSelect(event)}>
+            {map(this.state.characters, (_, realm: string) => {
+              return <option key={`realm${realm}`}>{realm}</option>;
+            })}
+          </select>
+          <select style={{ marginLeft: '5px' }}
+            onChange={event => this.onCharSelect(event)}>
+            {map(this.state.characters[this.state.selectedRealm!], (value, index) => {
+              return <option key={this.state.selectedRealm! + index} value={index}>{value.name}</option>;
+            })}
+          </select>
+        </div>
+
+        <a onClick={() => this.onSave()}>Save</a>
+        <div className="avatar-list">
+          {this.selectedCharacter().avatarList!.map((val, index) => {
+            const avatarClass = this.state.selectedAvatarIndex === index ? 'avatar-list__item--selected' : '';
+            return (
+              <div key={index} className={`avatar-list__item ${avatarClass}`} onClick={() => this.onAvatarSelect(index)}>
+                <img src={val.imageSrc}/>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }

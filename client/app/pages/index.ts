@@ -1,4 +1,5 @@
 export * from './forum/forum';
+export * from './login/login';
 export * from './home/home';
 export * from './not-found/not-found';
 export * from './oauth/oauth';

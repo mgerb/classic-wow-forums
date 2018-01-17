@@ -2,6 +2,7 @@
 
 $fontPrimary: #cccccc;
 $linkColor: #FFB019;
+$bluePost: #00C0FF;
 
 html {
   font-family: Arial,Helvetica,Sans-Serif;
@@ -103,6 +104,12 @@ span.grey {
   cursor: pointer;
 }
 
+.form-group {
+  & + & {
+    margin-top: 10px;
+  }
+}
+
 .input {
   border: 1px solid lighten(#161616, 10%);
   background-color: #161616;
@@ -155,5 +162,19 @@ div {
   img {
     max-width: 100%;
     height: auto;
+  }
+}
+
+.blue {
+  color: $bluePost !important;
+}
+
+.red {
+  color: red;
+}
+
+.blue-post {
+  p {
+    color: $bluePost;
   }
 }

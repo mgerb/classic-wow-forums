@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { initializeAxios } from './axios/axios';
 import { Footer, Header } from './components';
-import { Forum, Home, NotFound, Oauth, Realms, Thread, UserAccount } from './pages';
+import { Forum, Home, Login, NotFound, Oauth, Realms, Thread, UserAccount } from './pages';
 import { stores } from './stores/stores';
 
 // styling
@@ -48,6 +48,7 @@ export class Routes extends React.Component<Props, State> {
               <Route exact path="/f/:categoryId/:threadId" component={Thread} />
               <Route exact path="/oauth" component={Oauth} />
               <Route exact path="/user-account" component={UserAccount} />
+              <Route exact path="/login" component={Login} />
               <Route component={NotFound} />
             </Switch>
             <Footer />
