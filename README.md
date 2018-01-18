@@ -75,3 +75,29 @@ mix local.hex
 - Uses [ExGuard](https://github.com/slashmili/ex_guard) to run every time a file is changed.
 - Run `mix guard` to start watching files.
 - Check out `.exguard.exs` for configuration.
+
+# Postgres setup
+Change password to postgres user
+```
+sudo -u user_name psql db_name
+
+or 
+
+ALTER USER postgres WITH PASSWORD 'new_password';
+```
+
+Edit /var/lib/pgsql/data/pg_hba.conf
+
+```
+local   all   all   trust
+```
+
+```
+systemctl restart postgresql
+```
+
+# Issues encountered
+
+- Building the client files fails with not enough ram
+- It runs out of ram on a Centos vps so I needed to add more swap space
+- https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-centos-7

@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "A seed for a simple react application with typescript.",
   "scripts": {
-    "build": "NODE_ENV=production webpack -p --progress --colors",
+    "build": "webpack -p --progress --colors",
+    "build:dev": "NODE_ENV=dev webpack -p --progress --colors",
+    "build:prod": "NODE_ENV=production webpack -p --progress --colors",
     "dev": "webpack --progress --colors --watch",
     "c9": "webpack-dev-server --host 0.0.0.0 --port 8080 --inline --history-api-fallback",
     "start": "webpack-dev-server --inline --history-api-fallback",
