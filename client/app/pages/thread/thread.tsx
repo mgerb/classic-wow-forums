@@ -1,21 +1,29 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { get, find, map } from 'lodash';
+import { get, find, orderBy } from 'lodash';
 import marked from 'marked';
 import { DateTime } from 'luxon';
+import { inject, observer } from 'mobx-react';
 import { CharacterService, ThreadService } from '../../services';
 import { Editor, Portrait, ScrollToTop } from '../../components';
 import { ReplyModel, ThreadModel } from '../../model';
+import { UserStore } from '../../stores/user-store';
+import { Oauth } from '../../util';
 import './thread.scss';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {
+  userStore: UserStore;
+}
 
 interface State {
+  editingReply?: ReplyModel;
   quotedReply?: ReplyModel;
   showEditor: boolean;
   thread?: ThreadModel;
 }
 
+@inject('userStore')
+@observer
 export class Thread extends React.Component<Props, State> {
 
   constructor(props: Props) {
@@ -31,20 +39,27 @@ export class Thread extends React.Component<Props, State> {
 
   private async getReplies() {
     const thread = await ThreadService.getThread(this.props.match.params['threadId']);
-    thread.replies = map(thread.replies, (reply) => { // add the thread topic to the front of the list
-      return reply;
-    });
+    thread.replies = orderBy(thread.replies, ['inserted_at']);
     this.setState({ thread });
   }
 
   private onReplyClick() {
-    this.setState({ showEditor: true });
+    this.props.userStore.user ? this.setState({ showEditor: true }) : Oauth.openOuathWindow();
   }
 
   private onQuoteClick(reply: ReplyModel) {
+    this.props.userStore.user ?
     this.setState({
       showEditor: true,
       quotedReply: reply,
+    }) :
+    Oauth.openOuathWindow();
+  }
+
+  private onEditClick(reply: ReplyModel) {
+    this.setState({
+      editingReply: reply,
+      showEditor: true,
     });
   }
 
@@ -52,6 +67,7 @@ export class Thread extends React.Component<Props, State> {
     this.setState({
       showEditor: false,
       quotedReply: undefined,
+      editingReply: undefined,
     });
     if (!cancel) {
       this.getReplies();
@@ -99,6 +115,12 @@ export class Thread extends React.Component<Props, State> {
     );
   }
 
+  renderEditbutton(reply: ReplyModel): any {
+    if (get(this.props, 'userStore.user.id') === reply.user_id) {
+      return <a style={{ paddingRight: '10px' }} onClick={() => this.onEditClick(reply)}>Edit</a>;
+    }
+  }
+
   renderReplies(): any {
     return this.state.thread!.replies.map((reply, index) => {
       const replyDark = index % 2 === 0 ? 'reply--dark' : '';
@@ -114,7 +136,8 @@ export class Thread extends React.Component<Props, State> {
                   <b>{`${index + 1}. `}{index > 0 && 'Re: '}{this.state.thread!.title}</b>
                   <small style={{ paddingLeft: '5px' }}>| {this.getTimeFormat(reply.inserted_at)}</small>
                 </div>
-                <div>
+                <div className="flex flex--center">
+                  {this.renderEditbutton(reply)}
                   <img src={require('../../assets/quote-button.gif')}
                     className="reply__title__button"
                     onClick={() => this.onQuoteClick(reply)}/>
@@ -127,6 +150,7 @@ export class Thread extends React.Component<Props, State> {
               <div className="reply__content markdown-container">
                 {this.renderQuotedReply(reply)}
                 <div className={bluePost} dangerouslySetInnerHTML={{ __html: marked(reply.content, { sanitize: true }) }}/>
+                {reply.edited && <small className="red">[ post edited by {reply.user.character_name || reply.user.battletag} ]</small>}
               </div>
 
             </div>
@@ -150,6 +174,7 @@ export class Thread extends React.Component<Props, State> {
           <Editor threadId={this.props.match.params['threadId']}
             onClose={cancel => this.onEditorClose(cancel)}
             quotedReply={this.state.quotedReply}
+            editingReply={this.state.editingReply}
           />
         }
         <div className="topic-bg">

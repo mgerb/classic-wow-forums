@@ -50,7 +50,7 @@ defmodule MyApp.Data.Reply do
 
     case Repo.update_all(query, []) do
       nil -> {:error, "update thread error"}
-      _ -> {:ok, reply}
+      {1, _} -> {:ok, reply}
     end
   end
 
@@ -58,20 +58,20 @@ defmodule MyApp.Data.Reply do
   def user_update(params) do
     id = Map.get(params, "id")
     user_id = Map.get(params, "user_id")
+    content = Map.get(params, "content")
 
-    if is_nil(id) || is_nil(user_id) do
+    if is_nil(id) || is_nil(user_id) || is_nil(content) do
       {:error, "Invalid reply"}
     else
-      Repo.get_by(Data.Reply, %{id: id, user_id: user_id})
-      |> process_user_update(params)
-    end
-  end
+      query = from r in Data.Reply,
+        where: r.id == ^id and r.user_id == ^user_id,
+        update: [set: [content: ^content, edited: true]]
 
-  defp process_user_update(reply, _params) when is_nil(reply), do: {:error, "Invalid reply"}
-  defp process_user_update(reply, params) when not is_nil(reply) do
-    user_update_changeset(reply, params)
-    |> Repo.update
-    |> Data.Util.process_insert_or_update
+      case Repo.update_all(query, []) do
+        nil -> {:error, "update reply error"}
+        {1, _} -> {:ok, "ok"}
+      end
+    end
   end
 
 end

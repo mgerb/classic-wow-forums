@@ -6,8 +6,8 @@ import { ThreadService } from '../../services';
 import { Editor, ForumNav, LoginButton, ScrollToTop } from '../../components';
 import { ThreadModel } from '../../model';
 import { UserStore } from '../../stores/user-store';
-import './forum.scss';
 import { Oauth } from '../../util';
+import './forum.scss';
 
 const stickyImage = require('../../assets/sticky.gif');
 
@@ -102,7 +102,7 @@ export class Forum extends React.Component<Props, State> {
 
   renderCell(content: JSX.Element | string, style: any, center?: boolean, header?: boolean) {
     let classNames: string = '';
-    classNames += center ? ' forum-cell--center': '';
+    classNames += center ? ' forum-cell--center' : '';
     classNames += header ? ' forum-cell--header' : ' forum-cell--body';
     return <div className={`forum-cell flex-1 ${classNames}`} style={style}>{content}</div>;
   }

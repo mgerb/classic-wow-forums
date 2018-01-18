@@ -9,6 +9,7 @@ import './editor.scss';
 interface Props {
   categoryId?: string;
   onClose: (cancel: boolean) => any;
+  editingReply?: ReplyModel;
   quotedReply?: ReplyModel;
   threadId?: string;
 }
@@ -39,6 +40,11 @@ export class Editor extends React.Component<Props, State> {
   // disable scrolling in the background
   componentDidMount() {
     document.body.style.overflow = 'hidden';
+
+    // set content if user is editing a reply
+    if (this.props.editingReply) {
+      this.onContentChange({ target: { value: this.props.editingReply.content } });
+    }
 
     if (this.titleRef) {
       this.titleRef.focus();
@@ -84,12 +90,13 @@ export class Editor extends React.Component<Props, State> {
 
     const data = {
       content,
+      id: get(this.props, 'editingReply.id'),
       thread_id: this.props.threadId,
       quote_id: get(this.props, 'quotedReply.id') || undefined,
     };
 
     try {
-      await axios.post('/api/reply', data);
+      this.props.editingReply ? await axios.put('/api/reply', data) : await axios.post('/api/reply', data);
       this.props.onClose(false);
     } catch (e) {
       this.setState({ errorMessage: 'Server error. Please try again later.' });
@@ -140,17 +147,25 @@ export class Editor extends React.Component<Props, State> {
     );
   }
 
+  getEditorTitle(): string {
+    if (!this.props.threadId) {
+      return 'New Topic';
+    }
+    return `${this.props.editingReply ? 'Edit' : 'New'} Reply`;
+  }
+
   render() {
     return (
       <div className="editor-background">
         <ContentContainer className="editor-container">
           <form className="editor" onSubmit={event => this.onSubmit(event)} onReset={() => this.props.onClose(true)}>
 
-            <h2 style={{ color: 'white' }}>New {this.props.threadId ? 'Reply' : 'Topic'}</h2>
+            <h2 style={{ color: 'white' }}>{this.getEditorTitle()}</h2>
             {!this.props.threadId && this.renderTopicInput()}
 
             <div><label>Content</label></div>
             <textarea className="input editor__text-area flex-1"
+              value={this.state.content}
               onChange={event => this.onContentChange(event)} maxLength={2000}
               ref={ref => this.contentRef = ref}
             />
