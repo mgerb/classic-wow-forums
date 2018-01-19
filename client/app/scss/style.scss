@@ -33,9 +33,6 @@ a {
     color: white;
   }
 
-  &:visited {
-    color: #B1B1B1;
-  }
 }
 
 hr {
@@ -177,4 +174,8 @@ div {
   p {
     color: $bluePost;
   }
+}
+
+.page-link {
+  margin: 0 5px;
 }

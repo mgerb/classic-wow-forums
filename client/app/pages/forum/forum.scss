@@ -81,4 +81,17 @@ $grey2: #161616;
   &--center {
     justify-content: center;
   }
+
+
+  &--header-footer {
+    justify-content: space-between;
+    padding-right: 10px;
+  }
+}
+
+.thread__title {
+
+  &:visited {
+    color: #B1B1B1;
+  }
 }

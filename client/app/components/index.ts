@@ -4,5 +4,6 @@ export * from './footer/footer';
 export * from './forum-nav/forum-nav';
 export * from './header/header';
 export * from './login-button/login-button';
+export * from './pagination-links/pagination-links';
 export * from './portrait/portrait';
 export * from './scroll-to-top/scroll-to-top';

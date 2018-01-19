@@ -1,7 +1,7 @@
 import axios from '../axios/axios';
 import { ThreadModel } from '../model';
 
-const getCategoryThreads = async (category_id: string): Promise<ThreadModel[]> => {
+const getCategoryThreads = async (category_id: number): Promise<ThreadModel[]> => {
   try {
     const res = await axios.get(`/api/thread?category_id=${category_id}`);
     return res.data.data;

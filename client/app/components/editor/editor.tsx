@@ -7,7 +7,7 @@ import { ReplyModel } from '../../model';
 import './editor.scss';
 
 interface Props {
-  categoryId?: string;
+  categoryId?: number;
   onClose: (cancel: boolean) => any;
   editingReply?: ReplyModel;
   quotedReply?: ReplyModel;
