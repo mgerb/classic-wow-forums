@@ -1,18 +1,14 @@
 {
   "name": "react_starter",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A seed for a simple react application with typescript.",
   "scripts": {
     "build": "webpack -p --progress --colors",
-    "build:dev": "NODE_ENV=dev webpack -p --progress --colors",
-    "build:prod": "NODE_ENV=production webpack -p --progress --colors",
     "dev": "webpack --progress --colors --watch",
     "c9": "webpack-dev-server --host 0.0.0.0 --port 8080 --inline --history-api-fallback",
     "start": "webpack-dev-server --inline --history-api-fallback",
     "update-latest": "rm -rf node_modules && rm yarn.lock && ncu --upgrade --upgradeAll && yarn install"
   },
-  "author": "Mitchell Gerber",
-  "license": "MIT",
   "dependencies": {
     "@types/fingerprintjs2": "^1.5.1",
     "@types/lodash": "^4.14.92",

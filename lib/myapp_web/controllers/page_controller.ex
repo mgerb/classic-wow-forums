@@ -6,11 +6,11 @@ defmodule MyAppWeb.PageController do
   def index(conn, _params) do
 
     # cache index.html if prod
-    file = case Mix.env do
-      :dev -> File.read!("./priv/static/index.html")
-      _ -> 
+    file = case System.get_env("MIX_ENV") do
+      :prod -> 
         file = Cachex.get(:myapp, "index.html")
         |> get_file
+      _ -> File.read!(Application.app_dir(:myapp, "priv/static/index.html"))
     end
 
     conn
@@ -19,7 +19,7 @@ defmodule MyAppWeb.PageController do
 
   defp get_file({:ok, data}), do: data
   defp get_file({:missing, _}) do
-    file = File.read!("./priv/static/index.html")
+    file = File.read!(Application.app_dir(:myapp, "priv/static/index.html"))
     Cachex.set(:myapp, "index.html", file)
     file
   end

@@ -51,3 +51,5 @@ config :myapp, MyApp.Repo,
 config :myapp, MyApp.Guardian,
       issuer: "myapp",
       secret_key: "secret"
+
+import_config "dev.secret.exs"

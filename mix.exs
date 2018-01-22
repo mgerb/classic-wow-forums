@@ -5,7 +5,7 @@ defmodule MyApp.Mixfile do
     [
       app: :myapp,
       version: "0.0.1",
-      elixir: "~> 1.4",
+      elixir: "~> 1.5.2",
       elixirc_paths: elixirc_paths(Mix.env),
       compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,
@@ -47,6 +47,7 @@ defmodule MyApp.Mixfile do
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:ex_guard, "~> 1.3", only: :dev},
       {:cachex, "~> 2.1"},
+      {:distillery, "~> 1.5", runtime: false},
     ]
   end
 
