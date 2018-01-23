@@ -99,8 +99,8 @@ export class Forum extends React.Component<Props, State> {
     this.setState({
       threads,
       pageThreads: [...threads].splice(threadIndex, threadsPerPage),
-      pageLinks: pagination(page, numPages) },
-    );
+      pageLinks: pagination(page, numPages),
+    });
   }
 
   private orderBy(threads: ThreadModel[], props: Props) {
@@ -235,7 +235,7 @@ export class Forum extends React.Component<Props, State> {
     return (
       <div className="forum-row forum-row--header">
         <div className="forum-cell forum-cell--header forum-cell--header-footer flex-1">
-          <div>
+          <div className="flex">
             <span style={{ marginRight: '10px' }}>Page:</span>
             <PaginationLinks
               activePage={this.routeParams().page}

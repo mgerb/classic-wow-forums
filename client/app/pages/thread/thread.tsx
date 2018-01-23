@@ -1,18 +1,19 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { get, find, orderBy } from 'lodash';
+import { chain, get, find } from 'lodash';
 import marked from 'marked';
 import { DateTime } from 'luxon';
 import { inject, observer } from 'mobx-react';
 import { CharacterService, ThreadService } from '../../services';
-import { Editor, Portrait, ScrollToTop } from '../../components';
+import { Editor, PaginationLinks, Portrait, ScrollToTop } from '../../components';
 import { ReplyModel, ThreadModel } from '../../model';
 import { UserStore } from '../../stores/user-store';
-import { Oauth } from '../../util';
+import { Oauth, pagination } from '../../util';
 import './thread.scss';
 
 interface Props extends RouteComponentProps<any> {
   userStore: UserStore;
+  page: number;
 }
 
 interface State {
@@ -20,6 +21,8 @@ interface State {
   quotedReply?: ReplyModel;
   showEditor: boolean;
   thread?: ThreadModel;
+  replies: ReplyModel[];
+  pageLinks: (number | string)[];
 }
 
 @inject('userStore')
@@ -30,6 +33,8 @@ export class Thread extends React.Component<Props, State> {
     super(props);
     this.state = {
       showEditor: false,
+      replies: [],
+      pageLinks: [],
     };
   }
 
@@ -37,10 +42,45 @@ export class Thread extends React.Component<Props, State> {
     this.getReplies();
   }
 
+  componentWillReceiveProps(nextProps: Props) {
+    if (this.props.match.params['page'] !== nextProps.match.params['page']) {
+      this.processReplies(this.state.thread!, nextProps);
+    }
+  }
+
+  private routeParams(props: Props = this.props) {
+    return {
+      categoryId: parseInt(props.match.params['categoryId'], 10),
+      threadId: parseInt(props.match.params['threadId'], 10),
+      page: parseInt(props.match.params['page'], 10) || 1,
+    };
+  }
+
+  private navigateHere(page: number) {
+    const { categoryId, threadId } = this.routeParams();
+    const url = `/t/${categoryId}/${threadId}/${page}`;
+    this.props.history.push(url);
+  }
+
   private async getReplies() {
     const thread = await ThreadService.getThread(this.props.match.params['threadId']);
-    thread.replies = orderBy(thread.replies, ['inserted_at']);
-    this.setState({ thread });
+    this.processReplies(thread);
+  }
+
+  private processReplies(thread: ThreadModel, props: Props = this.props) {
+    thread.replies = chain(thread.replies)
+      .orderBy(['inserted_at'], ['asc'])
+      .map((t, i) => { t.index = i; return t; })
+      .value();
+    const { page } = this.routeParams(props);
+    const numPages = Math.ceil(thread.replies.length / 20);
+    const replyIndex = (page - 1) * 20;
+
+    this.setState({
+      thread,
+      replies: [...thread.replies].splice(replyIndex, 20),
+      pageLinks: pagination(page, numPages),
+    });
   }
 
   private onReplyClick() {
@@ -122,7 +162,7 @@ export class Thread extends React.Component<Props, State> {
   }
 
   renderReplies(): any {
-    return this.state.thread!.replies.map((reply, index) => {
+    return this.state.replies.map((reply, index) => {
       const replyDark = index % 2 === 0 ? 'reply--dark' : '';
       const bluePost = reply.user.permissions === 'admin' ? 'blue-post' : '';
       return (
@@ -133,7 +173,7 @@ export class Thread extends React.Component<Props, State> {
 
               <div className="reply__title">
                 <div>
-                  <b>{`${index + 1}. `}{index > 0 && 'Re: '}{this.state.thread!.title}</b>
+                  <b>{`${reply.index! + 1}. `}{index > 0 && 'Re: '}{this.state.thread!.title}</b>
                   <small style={{ paddingLeft: '5px' }}>| {this.getTimeFormat(reply.inserted_at)}</small>
                 </div>
                 <div className="flex flex--center">
@@ -160,21 +200,33 @@ export class Thread extends React.Component<Props, State> {
     });
   }
 
+  renderPagingBg() {
+    return (
+      <div className="paging-bg">
+        <PaginationLinks activePage={this.routeParams().page}
+          pageLinks={this.state.pageLinks}
+          onPageSelect={page => this.navigateHere(page)}
+          showArrows={true}
+          />
+      </div>
+    );
+  }
+
   render() {
 
-    if (!this.state.thread) {
+    const { editingReply, thread, replies, showEditor, quotedReply } = this.state;
+
+    if (!thread) {
       return <div></div>;
     }
 
-    const replies = get(this.state, 'thread.replies');
-
     return (
       <ScrollToTop {...this.props}>
-        {this.state.showEditor &&
+        {showEditor &&
           <Editor threadId={this.props.match.params['threadId']}
             onClose={cancel => this.onEditorClose(cancel)}
-            quotedReply={this.state.quotedReply}
-            editingReply={this.state.editingReply}
+            quotedReply={quotedReply}
+            editingReply={editingReply}
           />
         }
         <div className="topic-bg">
@@ -182,7 +234,7 @@ export class Thread extends React.Component<Props, State> {
             <div className="threadTopic">
               <img src={require('../../assets/sticky.gif')} style={{ marginRight: '5px' }}/>
               <b>Topic: </b>
-              <small style={{ paddingLeft: '15px', color: 'white' }}>| {this.getTimeFormat(this.state.thread!.inserted_at)}</small>
+              <small style={{ paddingLeft: '15px', color: 'white' }}>| {this.getTimeFormat(thread!.inserted_at)}</small>
             </div>
           </div>
           <img src={require('../../assets/forum-index.gif')}
@@ -191,11 +243,12 @@ export class Thread extends React.Component<Props, State> {
           />
         </div>
 
-        <div className="paging-bg"/>
+        {this.renderPagingBg()}
         <div className="reply-body">
           {replies && this.renderReplies()}
         </div>
-        <div className="paging-bg"/>
+        {this.renderPagingBg()}
+
         <div className="forumliner-bot-bg"/>
         <img src={require('../../assets/forum-index-bot.gif')}
           onClick={() => this.navigateForumIndex()}

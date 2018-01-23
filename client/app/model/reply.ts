@@ -4,6 +4,7 @@ export interface ReplyModel {
   content: string;
   edited: boolean;
   id: number;
+  index?: number;
   inserted_at: string;
   quote_id: number;
   thread_id: number;
