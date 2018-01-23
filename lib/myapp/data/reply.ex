@@ -12,6 +12,7 @@ defmodule MyApp.Data.Reply do
     field :content, :string
     field :edited, :boolean, default: false
     field :quote_id, :integer
+    field :hidden, :boolean, default: false
     has_one :user, Data.User, foreign_key: :id, references: :user_id
     timestamps(type: :utc_datetime)
   end
@@ -54,7 +55,7 @@ defmodule MyApp.Data.Reply do
     end
   end
 
-  @spec user_update(map) :: {:ok, map} | {:error, map}
+  @spec user_update(map) :: {:ok, String.t} | {:error, String.t}
   def user_update(params) do
     id = Map.get(params, "id")
     user_id = Map.get(params, "user_id")

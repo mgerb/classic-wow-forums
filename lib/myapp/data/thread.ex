@@ -16,6 +16,7 @@ defmodule MyApp.Data.Thread do
     field :locked, :boolean, default: false
     field :edited, :boolean, default: false
     field :reply_count, :integer, default: 0
+    field :hidden, :boolean, default: false
     has_many :replies, Data.Reply
     has_one :user, Data.User, foreign_key: :id, references: :user_id
     has_one :last_reply, Data.User, foreign_key: :id, references: :last_reply_id
