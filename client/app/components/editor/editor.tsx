@@ -80,6 +80,12 @@ export class Editor extends React.Component<Props, State> {
     }
   }
 
+  getErrorMessage(e: any) {
+    return get(e, 'response.status') === 429 ?
+      'You are doing that too much! Please try again in a few minutes.' :
+      'Server error. Please try again later.';
+  }
+
   async newReply() {
     const { content } = this.state;
 
@@ -99,7 +105,7 @@ export class Editor extends React.Component<Props, State> {
       this.props.editingReply ? await axios.put('/api/reply', data) : await axios.post('/api/reply', data);
       this.props.onClose(false);
     } catch (e) {
-      this.setState({ errorMessage: 'Server error. Please try again later.' });
+      this.setState({ errorMessage: this.getErrorMessage(e) });
     }
   }
 
@@ -121,7 +127,7 @@ export class Editor extends React.Component<Props, State> {
       await axios.post('/api/thread', data);
       this.props.onClose(false);
     } catch (e) {
-      this.setState({ errorMessage: 'Server error. Please try again later.' });
+      this.setState({ errorMessage: this.getErrorMessage(e) });
     }
   }
 

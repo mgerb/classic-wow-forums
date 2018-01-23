@@ -2,6 +2,7 @@ defmodule MyAppWeb.ReplyController do
   use MyAppWeb, :controller
   alias MyAppWeb.Response
   alias MyApp.Data
+  alias MyApp.RateLimiter
 
   @spec insert(map, map) :: any
   def insert(conn, params) do
@@ -9,10 +10,14 @@ defmodule MyAppWeb.ReplyController do
     |> MyApp.Guardian.Plug.current_claims
     |> Map.get("id")
 
-    {output, status} = params
-      |> Map.put("user_id",  user_id)
-      |> Data.Reply.insert
-      |> Response.put_resp
+    {output, status} = case RateLimiter.limit(RateLimiter.new_reply_key, user_id, 60) do
+      {:ok, _} -> params
+        |> Map.put("user_id",  user_id)
+        |> Data.Reply.insert
+        |> Response.put_resp
+
+      {:error, error} -> {error, 429}
+    end
 
     conn
     |> put_status(status)

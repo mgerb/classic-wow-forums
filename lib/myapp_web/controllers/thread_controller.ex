@@ -2,6 +2,7 @@ defmodule MyAppWeb.ThreadController do
   use MyAppWeb, :controller
   alias MyAppWeb.Response
   alias MyApp.Data
+  alias MyApp.RateLimiter
 
   @spec insert(map, map) :: any
   def insert(conn, params) do
@@ -9,10 +10,14 @@ defmodule MyAppWeb.ThreadController do
     |> MyApp.Guardian.Plug.current_claims
     |> Map.get("id")
 
-    {output, status} = params
-      |> Map.put("user_id",  user_id)
-      |> Data.Thread.insert
-      |> Response.put_resp
+    # every 5 minutes user can submit new thread
+    {output, status} = case RateLimiter.limit(RateLimiter.new_thread_key, user_id, 300) do
+      {:ok, _} -> params
+        |> Map.put("user_id",  user_id)
+        |> Data.Thread.insert
+        |> Response.put_resp
+      {:error, error} -> {error, 429}
+    end
 
     conn
     |> put_status(status)
