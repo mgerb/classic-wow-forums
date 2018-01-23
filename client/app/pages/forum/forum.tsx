@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { orderBy } from 'lodash';
+import { cloneDeep, filter, orderBy } from 'lodash';
 import { ThreadService } from '../../services';
 import { Editor, ForumNav, LoginButton, PaginationLinks, ScrollToTop } from '../../components';
 import { ThreadModel } from '../../model';
@@ -20,8 +20,10 @@ interface Props extends RouteComponentProps<any> {
 interface State {
   showEditor: boolean;
   threads: ThreadModel[];
+  initialThreads: ThreadModel[];
   pageThreads: ThreadModel[];
   pageLinks: (number | string)[];
+  searchText: string;
 }
 
 interface RouteParams {
@@ -49,8 +51,10 @@ export class Forum extends React.Component<Props, State> {
     this.state = {
       showEditor: false,
       threads: [],
+      initialThreads: [],
       pageThreads: [],
       pageLinks: [],
+      searchText: '',
     };
   }
 
@@ -81,6 +85,7 @@ export class Forum extends React.Component<Props, State> {
   // fetch threads from server
   private async getThreads(categoryId: number) {
     const threads = await ThreadService.getCategoryThreads(categoryId);
+    this.setState({ initialThreads: threads });
     this.processThreads(threads);
   }
 
@@ -119,6 +124,15 @@ export class Forum extends React.Component<Props, State> {
     this.props.history.push(url);
   }
 
+  private onSearch(event: any) {
+    event.preventDefault();
+    const threads = filter(cloneDeep(this.state.initialThreads), (t) => {
+      return t.title.toLowerCase().match(this.state.searchText.toLowerCase());
+    });
+
+    this.processThreads(threads);
+  }
+
   private onNewTopic() {
     if (this.props.userStore.user) {
       this.setState({ showEditor: true });
@@ -148,7 +162,7 @@ export class Forum extends React.Component<Props, State> {
   renderBody() {
     return (
       <div className="forum-body">
-        <div className="flex">
+        <form className="flex" style={{ marginBottom: 0 }} onSubmit={e => this.onSearch(e)}>
           <img src={require('../../assets/forum-menu-left.gif')}/>
           <img src={require('../../assets/forum-menu-newtopic.gif')}
             className="clickable"
@@ -156,11 +170,13 @@ export class Forum extends React.Component<Props, State> {
           <img src={require('../../assets/forum-menu-right.gif')}/>
           <img src={require('../../assets/forum-menu-search-left.gif')}/>
           <div className="forum-menu-search-bg">
-            <input name="SearchText"/>
+            <input name="SearchText" onChange={event => this.setState({ searchText: event.target.value })}/>
           </div>
-          <img src={require('../../assets/forum-menu-search.gif')} className="clickable"/>
+          <input type="image" name="submit"
+            src={require('../../assets/forum-menu-search.gif')}
+            className="clickable" style={{ outline: 'none' }}/>
           <div className="forumliner-bg"/>
-        </div>
+        </form>
 
         {this.renderTable()}
       </div>
