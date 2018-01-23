@@ -91,12 +91,18 @@ export class Home extends React.Component<Props, State> {
         <ContentContainer>
           <img src={header_forms} />
           <div>
-            <b>Welcome to the World of Warcraft community forums!</b>
+            <b>Welcome to the unofficial Classic WoW Forums!</b>
           </div>
           <p>
-            Blizzard provides the World of Warcraft community forums for its player to chat, exchange ideas, and submit feedback. Posting on
-            the World of Warcraft community forums requires a World of Warcraft account. Only customers are allowed to post on these forums,
-            but anyone can read them. Please note that you must adhere to the Forum Guidelines if you wish to post on the forums.
+            This site is made with the intention of providing a web forum
+            that replicates the World of Warcraft forums as they were
+            back in 2005.
+          </p>
+
+          <p>
+            <b>DISCLAIMER:</b> This site is in no way affiliated with Blizzard Entertainment, Inc. All rights reserved.
+            World of Warcraft, Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment,
+            Inc. in the U.S. and/or other countries.
           </p>
 
           <div className="topic-container">
