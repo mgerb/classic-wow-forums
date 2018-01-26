@@ -39,6 +39,9 @@ defmodule MyAppWeb.Router do
       pipe_through [:user_auth]
       post "/", ThreadController, :insert
       put "/", ThreadController, :update
+
+      pipe_through [:mod_auth]
+      put "/mod", ThreadController, :mod_update
     end
 
     scope "/reply" do
@@ -46,6 +49,9 @@ defmodule MyAppWeb.Router do
       pipe_through [:user_auth]
       post "/", ReplyController, :insert
       put "/", ReplyController, :update
+
+      pipe_through [:mod_auth]
+      put "/mod", ReplyController, :mod_update
     end
 
     scope "/category" do

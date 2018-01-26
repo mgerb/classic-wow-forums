@@ -12,11 +12,10 @@ defmodule MyApp.Data.Thread do
     field :view_count, :integer, default: 0
     field :user_id, :integer # references :user
     field :last_reply_id, :integer
-    field :sticky, :boolean, default: false
-    field :locked, :boolean, default: false
-    field :edited, :boolean, default: false
     field :reply_count, :integer, default: 0
     field :hidden, :boolean, default: false
+    field :locked, :boolean, default: false
+    field :sticky, :boolean, default: false
     has_many :replies, Data.Reply
     has_one :user, Data.User, foreign_key: :id, references: :user_id
     has_one :last_reply, Data.User, foreign_key: :id, references: :last_reply_id
@@ -31,10 +30,15 @@ defmodule MyApp.Data.Thread do
     |> foreign_key_constraint(:user_id)
   end
 
-  # TODO: allow mods to set sticky/locked on threads
-  defp mod_update_changeset(thread, params \\ %{}) do
-    thread
-    |> cast(params, [:sticky, :locked])
+  @spec mod_update(map) :: {:ok, any}
+  def mod_update(params) do
+    Repo.transaction(fn ->
+      reply = Repo.get_by(Data.Thread, %{ id: Map.get(params, "id")})
+
+      reply
+      |> cast(params, [:hidden, :sticky, :locked])
+      |> Repo.update
+    end)
   end
 
   def get(thread_id) do
@@ -56,7 +60,6 @@ defmodule MyApp.Data.Thread do
         :sticky,
         :locked,
         :last_reply_id,
-        :edited,
         :category_id,
         :title,
         :view_count,

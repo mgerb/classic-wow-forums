@@ -10,10 +10,18 @@ defmodule MyAppWeb.ReplyController do
     |> MyApp.Guardian.Plug.current_claims
     |> Map.get("id")
 
-    {output, status} = case RateLimiter.limit(RateLimiter.new_reply_key, user_id, 60) do
-      {:ok, _} -> params
+    {output, status} = case RateLimiter.check_limit(RateLimiter.new_reply_key, user_id) do
+      {:ok, _} ->
+        {ok, data} = params
         |> Map.put("user_id",  user_id)
         |> Data.Reply.insert
+
+        if ok == :ok do
+          # apply rate limiter only after submitting new reply
+          RateLimiter.set_limit(RateLimiter.new_reply_key, user_id, 60)
+        end
+
+        {ok, data}
         |> Response.put_resp
 
       {:error, error} -> {error, 429}
@@ -38,6 +46,14 @@ defmodule MyAppWeb.ReplyController do
     conn
     |> put_status(status)
     |> Response.json(output)
+  end
+
+  @spec mod_update(map, map) :: any
+  def mod_update(conn, params) do
+    {:ok, _} = Data.Reply.mod_update(params)
+    conn
+    |> put_status(200)
+    |> Response.json("ok")
   end
   
 end

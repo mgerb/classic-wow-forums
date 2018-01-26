@@ -195,6 +195,7 @@ Enum.each(Category.get_seed(), fn(cat) ->
   end)
 end)
 
+# TODO: Fix this for testing
 # insert admin user
 accounts = Application.get_env(:myapp, :admin_accounts)
 

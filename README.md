@@ -96,8 +96,27 @@ local   all   all   trust
 systemctl restart postgresql
 ```
 
+## Postgres in docker container
+```
+docker run --name postgres1 -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+```
+
 # Issues encountered
 
 - Building the client files fails with not enough ram
 - It runs out of ram on a Centos vps so I needed to add more swap space
 - https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-centos-7
+
+# Battlenet API
+Battlenet required https for a redirect for authentication. I use caddy for https proxy during development.
+
+Caddyfile
+```
+https://localhost {
+        tls self_signed
+        proxy / http://localhost:8080 {
+                transparent
+                websocket
+        }
+}
+```

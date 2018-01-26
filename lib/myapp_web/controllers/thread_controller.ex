@@ -11,11 +11,21 @@ defmodule MyAppWeb.ThreadController do
     |> Map.get("id")
 
     # every 5 minutes user can submit new thread
-    {output, status} = case RateLimiter.limit(RateLimiter.new_thread_key, user_id, 300) do
-      {:ok, _} -> params
+    {output, status} = case RateLimiter.check_limit(RateLimiter.new_thread_key, user_id) do
+      {:ok, _} ->
+
+        {ok, data} = params
         |> Map.put("user_id",  user_id)
         |> Data.Thread.insert
+
+        if ok == :ok do
+          # apply rate limiter only after submitting new post
+          RateLimiter.set_limit(RateLimiter.new_thread_key, user_id, 300)
+        end
+
+        {ok, data}
         |> Response.put_resp
+
       {:error, error} -> {error, 429}
     end
 
@@ -69,6 +79,14 @@ defmodule MyAppWeb.ThreadController do
     conn
     |> put_status(status)
     |> Response.json(output)
+  end
+
+  @spec mod_update(map, map) :: any
+  def mod_update(conn, params) do
+    {:ok, _} = Data.Thread.mod_update(params)
+    conn
+    |> put_status(200)
+    |> Response.json("ok")
   end
 
 end

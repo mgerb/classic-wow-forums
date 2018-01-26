@@ -10,8 +10,8 @@ defmodule MyApp.Data.Reply do
     field :user_id, :integer # references :user
     field :thread_id, :integer # references :thread
     field :content, :string
-    field :edited, :boolean, default: false
     field :quote_id, :integer
+    field :edited, :boolean, default: false
     field :hidden, :boolean, default: false
     has_one :user, Data.User, foreign_key: :id, references: :user_id
     timestamps(type: :utc_datetime)
@@ -35,11 +35,20 @@ defmodule MyApp.Data.Reply do
 
   @spec insert(map) :: {:ok, map} | {:error, map}
   def insert(params) do
-    {:ok, data} = insert_changeset(%Data.Reply{}, params)
-    |> Repo.insert
-    |> Data.Util.process_insert_or_update
-    |> update_thread_new_reply
-    {:ok, Map.drop(data, [:user])} # drop user because we can't encode it if it's not preloaded
+    {:ok, data} = Repo.transaction(fn ->
+      thread = Repo.get_by(Data.Thread, %{ id: Map.get(params, "thread_id")})
+
+      if !thread.locked do
+        {:ok, data} = insert_changeset(%Data.Reply{}, params)
+        |> Repo.insert
+        |> Data.Util.process_insert_or_update
+        |> update_thread_new_reply
+        {:ok, Map.drop(data, [:user])} # drop user because we can't encode it if it's not preloaded
+      else
+        {:error, "thread locked"}
+      end
+    end)
+    data
   end
 
   defp update_thread_new_reply({:error, error}), do: {:error, error}
@@ -73,6 +82,17 @@ defmodule MyApp.Data.Reply do
         {1, _} -> {:ok, "ok"}
       end
     end
+  end
+
+  @spec mod_update(map) :: {:ok, any}
+  def mod_update(params) do
+    Repo.transaction(fn ->
+      reply = Repo.get_by(Data.Reply, %{ id: Map.get(params, "id")})
+
+      reply
+      |> cast(params, [:hidden])
+      |> Repo.update
+    end)
   end
 
 end
