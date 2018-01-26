@@ -58,6 +58,7 @@ defmodule MyApp.Data.Thread do
         :updated_at,
         :inserted_at,
         :sticky,
+        :hidden,
         :locked,
         :last_reply_id,
         :category_id,

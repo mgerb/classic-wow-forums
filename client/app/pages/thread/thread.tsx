@@ -70,7 +70,9 @@ export class Thread extends React.Component<Props, State> {
   private processReplies(thread: ThreadModel, props: Props = this.props) {
     thread.replies = chain(thread.replies)
       .orderBy(['inserted_at'], ['asc'])
-      .map((t, i) => { t.index = i; return t; })
+      .map((r, i) => { r.index = i; return r; })
+      // remove hidden replies only for normal users
+      .reject(r => !this.props.userStore.isModOrAdmin() && r.hidden)
       .value();
     const { page } = this.routeParams(props);
     const numPages = Math.ceil(thread.replies.length / 20);
@@ -112,6 +114,11 @@ export class Thread extends React.Component<Props, State> {
     if (!cancel) {
       this.getReplies();
     }
+  }
+
+  private async onModButtonClick(params: { id: number, hidden?: boolean}) {
+    await ThreadService.modUpdateReply(params);
+    this.getReplies();
   }
 
   private navigateForumIndex() {
@@ -161,6 +168,17 @@ export class Thread extends React.Component<Props, State> {
     }
   }
 
+  renderModButtons(reply: ReplyModel, index: number): any {
+    const { id, hidden } = reply;
+    if (index !== 0 && this.props.userStore.isModOrAdmin()) {
+      return (
+        <a style={{ paddingRight: '10px' }} onClick={() => this.onModButtonClick({ id, hidden: !hidden })}>
+          {hidden ? <span className="red">Unhide</span> : <span>Hide</span>}
+        </a>
+      );
+    }
+  }
+
   renderReplies(): any {
     return this.state.replies.map((reply, index) => {
       const replyDark = index % 2 === 0 ? 'reply--dark' : '';
@@ -177,6 +195,7 @@ export class Thread extends React.Component<Props, State> {
                   <small style={{ paddingLeft: '5px' }}>| {this.getTimeFormat(reply.inserted_at)}</small>
                 </div>
                 <div className="flex flex--center">
+                  {this.renderModButtons(reply, index)}
                   {this.renderEditbutton(reply)}
                   <img src={require('../../assets/quote-button.gif')}
                     className="reply__title__button"

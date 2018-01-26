@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { cloneDeep, filter, orderBy } from 'lodash';
-import { ThreadService } from '../../services';
+import { cloneDeep, filter, orderBy, reject } from 'lodash';
+import { ThreadService, ModUpdate } from '../../services';
 import { Editor, ForumNav, LoginButton, PaginationLinks, ScrollToTop } from '../../components';
 import { ThreadModel } from '../../model';
 import { UserStore } from '../../stores/user-store';
@@ -84,7 +84,9 @@ export class Forum extends React.Component<Props, State> {
 
   // fetch threads from server
   private async getThreads(categoryId: number) {
-    const threads = await ThreadService.getCategoryThreads(categoryId);
+    let threads = await ThreadService.getCategoryThreads(categoryId);
+    // remove hidden threads from normal users
+    threads = reject(threads, t => !this.props.userStore.isModOrAdmin() && t.hidden);
     this.setState({ initialThreads: threads });
     this.processThreads(threads);
   }
@@ -133,6 +135,11 @@ export class Forum extends React.Component<Props, State> {
     this.processThreads(threads);
   }
 
+  private async onModItemClick(params: ModUpdate) {
+    await ThreadService.modUpdateThread(params);
+    this.getThreads(this.routeParams().categoryId);
+  }
+
   private onNewTopic() {
     if (this.props.userStore.user) {
       this.setState({ showEditor: true });
@@ -161,7 +168,7 @@ export class Forum extends React.Component<Props, State> {
 
   renderBody() {
     return (
-      <div className="forum-body">
+      <div>
         <form className="flex" style={{ marginBottom: 0 }} onSubmit={e => this.onSearch(e)}>
           <img src={require('../../assets/forum-menu-left.gif')}/>
           <img src={require('../../assets/forum-menu-newtopic.gif')}
@@ -183,35 +190,41 @@ export class Forum extends React.Component<Props, State> {
     );
   }
 
-  renderCell(content: JSX.Element | string, style: any, center?: boolean) {
-    let classNames: string = '';
-    classNames += center ? ' forum-cell--center' : '';
-    return <div className={`forum-cell flex-1 forum-cell--body ${classNames}`} style={style}>{content}</div>;
-  }
-
   renderThreadRows() {
     const { categoryId } = this.routeParams();
     return this.state.pageThreads.map((thread, index) => {
-      const authorBluePost = thread.user.permissions === 'admin' ? 'blue' : '';
-      const lastReplyBluePost = thread.last_reply.permissions === 'admin' ? 'blue' : '';
-      const sticky = thread.sticky ? <img src={stickyImage} title="Sticky"/> : '';
+      const { id, sticky, hidden, last_reply, locked, reply_count, title, user, view_count } = thread;
+      const authorBluePost = user.permissions === 'admin' ? 'blue' : '';
+      const lastReplyBluePost = last_reply.permissions === 'admin' ? 'blue' : '';
+      const stickyElement = sticky ? <img src={stickyImage} title="Sticky"/> : '';
       return (
-        <div className={`forum-row ${index % 2 === 0 && 'forum-row--dark'}`} key={index}>
-          {this.renderCell(sticky, { maxWidth: '50px' }, true)}
-          {this.renderCell(
-            <Link to={`/t/${categoryId}/${thread.id}`} className="thread__title">{thread.title}</Link>,
-            { minWidth: '200px' },
-          )}
-          {this.renderCell(<b className={authorBluePost}>{thread.user.character_name || thread.user.battletag}</b>, { maxWidth: '150px' })}
-          {this.renderCell(<b>{thread.reply_count}</b>, { maxWidth: '150px' }, true)}
-          {this.renderCell(<b>{thread.view_count}</b>, { maxWidth: '150px' }, true)}
-          {this.renderCell(
+        <tr className="forum-row forum-row__body" key={index}>
+          <td className={`forum-cell forum-cell--body forum-cell--center`}>{stickyElement}</td>
+          <td className={`forum-cell forum-cell--body`}>
+            <Link to={`/t/${categoryId}/${id}`} className="thread__title">{title}</Link>
+            {this.props.userStore.isModOrAdmin() &&
+              <span className="forum-cell__mod-controls">
+                <a onClick={() => this.onModItemClick({ id, sticky: !sticky })}>{sticky ? 'Unstick' : 'Stick'}</a>
+                <a onClick={() => this.onModItemClick({ id, locked: !locked })}>{locked ? 'Unlock' : 'Lock'}</a>
+                <a onClick={() => this.onModItemClick({ id, hidden: !hidden })}>{hidden ? 'Unhide' : 'Hide'}</a>
+              </span>
+            }
+          </td>
+          <td className={`forum-cell forum-cell--body`}>
+            <b className={authorBluePost}>{user.character_name || user.battletag}</b>
+          </td>
+          <td className={`forum-cell forum-cell--body forum-cell--center`}>
+            <b>{reply_count}</b>
+          </td>
+          <td className={`forum-cell forum-cell--body forum-cell--center`}>
+            <b>{view_count}</b>
+          </td>
+          <td className={`forum-cell forum-cell--body`}>
             <div style={{ fontSize: '8pt' }}>
-              by <b className={lastReplyBluePost}>{thread.last_reply.character_name || thread.last_reply.battletag}</b>
-            </div>,
-            { maxWidth: '200px' },
-          )}
-        </div>
+              by <b className={lastReplyBluePost}>{last_reply.character_name || last_reply.battletag}</b>
+            </div>
+          </td>
+        </tr>
       );
     });
   }
@@ -233,22 +246,24 @@ export class Forum extends React.Component<Props, State> {
   renderHeaderFooter() {
     const { categoryId, sortBy, threadsPerPage, sortOrder } = this.routeParams();
     return (
-      <div className="forum-row forum-row--header">
-        <div className="forum-cell forum-cell--header forum-cell--header-footer flex-1">
-          <div className="flex">
-            <span style={{ marginRight: '10px' }}>Page:</span>
-            <PaginationLinks
-              activePage={this.routeParams().page}
-              pageLinks={this.state.pageLinks}
-              onPageSelect={page => this.navigateHere(categoryId, page, threadsPerPage, sortBy, sortOrder)}
-            />
+      <tr className="forum-table__header">
+        <td colSpan={100} className="forum-cell forum-cell--header">
+          <div className="flex forum-cell--header-footer">
+            <div className="flex">
+              <span style={{ marginRight: '10px' }}>Page:</span>
+              <PaginationLinks
+                activePage={this.routeParams().page}
+                pageLinks={this.state.pageLinks}
+                onPageSelect={page => this.navigateHere(categoryId, page, threadsPerPage, sortBy, sortOrder)}
+              />
+            </div>
+            <div>
+              <b>Threads/Page:</b>
+              {this.renderThreadsPerPageDropdown()}
+            </div>
           </div>
-          <div>
-            <b>Threads/Page:</b>
-            {this.renderThreadsPerPageDropdown()}
-          </div>
-        </div>
-      </div>
+        </td>
+      </tr>
     );
   }
 
@@ -257,49 +272,49 @@ export class Forum extends React.Component<Props, State> {
     return show ? <img src={imgSrc}/> : null;
   }
 
-  renderHeaderCell(columnHeader: ColumnHeader, style: any, center: boolean) {
+  renderHeaderCell(columnHeader: ColumnHeader, center: boolean) {
     const { categoryId, page, threadsPerPage, sortBy, sortOrder } = this.routeParams();
     const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     const centerClass = center ? 'forum-cell--center' : '';
 
     return (
-      <div className={`forum-cell forum-cell--header flex-1 ${centerClass}`} style={style}>
+      <td className={`forum-cell forum-cell--header ${centerClass}`}>
         <a onClick={() => this.navigateHere(categoryId, page, threadsPerPage, columnHeader, newSortOrder)}>
           <span>{columnHeader}</span>
           {this.renderSortingArrow(sortBy === columnHeader, sortOrder)}
         </a>
-      </div>
+      </td>
     );
   }
 
   renderTable() {
     return (
       <div style={{ padding: '0 3px' }}>
-        <div className="forum-table">
+        <table className="forum-table">
+          <tbody>
 
-          {/* header */}
-          {this.renderHeaderFooter()}
+            {/* header */}
+            {this.renderHeaderFooter()}
 
-          {/* column headers */}
-          <div className="forum-row forum-row--header">
-            <div className={`forum-cell forum-cell--header flex-1 forum-cell--center`} style={{ maxWidth: '50px' }}>
-              <img src={require('../../assets/flag.gif')}/>
-            </div>
-            {this.renderHeaderCell(ColumnHeader.subject, { minWidth: '200px' }, false)}
-            {this.renderHeaderCell(ColumnHeader.author, { maxWidth: '150px' }, true)}
-            {this.renderHeaderCell(ColumnHeader.replies, { maxWidth: '150px' }, true)}
-            {this.renderHeaderCell(ColumnHeader.views, { maxWidth: '150px' }, true)}
-            {this.renderHeaderCell(ColumnHeader.lastPost, { maxWidth: '200px' }, true)}
-          </div>
+            <tr className="forum-table__header">
+              <td className={`forum-cell forum-cell--header forum-cell--center`} style={{ maxWidth: '50px' }}>
+                <img src={require('../../assets/flag.gif')}/>
+              </td>
+              {this.renderHeaderCell(ColumnHeader.subject, false)}
+              {this.renderHeaderCell(ColumnHeader.author, true)}
+              {this.renderHeaderCell(ColumnHeader.replies, true)}
+              {this.renderHeaderCell(ColumnHeader.views, true)}
+              {this.renderHeaderCell(ColumnHeader.lastPost, true)}
+            </tr>
 
-          {/* table body */}
-          {this.renderThreadRows()}
+            {/* body */}
+            {this.renderThreadRows()}
 
-          {/* footer  */}
-          {this.renderHeaderFooter()}
+            {/* footer  */}
+            {this.renderHeaderFooter()}
 
-        </div>
-
+          </tbody>
+        </table>
         <div className="forumliner-bot-bg"/>
       </div>
     );

@@ -44,6 +44,9 @@ export class UserStore {
     localStorage.removeItem('user');
   }
 
+  @action isModOrAdmin() {
+    return this.user && this.user.permissions.match(/mod|admin/);
+  }
 }
 
 export default new UserStore();

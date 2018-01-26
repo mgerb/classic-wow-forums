@@ -5,6 +5,7 @@ export interface ThreadModel {
   category_id: number;
   title: string;
   edited: boolean;
+  hidden: boolean;
   id: number;
   inserted_at: string;
   last_reply: UserModel;

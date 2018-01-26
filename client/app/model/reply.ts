@@ -3,6 +3,7 @@ import { UserModel } from './user';
 export interface ReplyModel {
   content: string;
   edited: boolean;
+  hidden: boolean;
   id: number;
   index?: number;
   inserted_at: string;
