@@ -15,9 +15,9 @@ const login = async (username: string, password: string): Promise<any> => {
   userStore.setUser(res.data.data);
 };
 
-const getCharacters = async (): Promise<any> => {
+const getCharacters = async (params: any): Promise<any> => {
   try {
-    const res = await axios.get('/api/user/characters');
+    const res = await axios.get('/api/user/characters', { params });
     const characters = res.data.data.characters;
     if (!!characters) {
       res.data.data.characters = filterCharacters(characters);

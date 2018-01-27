@@ -38,7 +38,6 @@ defmodule MyAppWeb.Router do
       # authenticated routes
       pipe_through [:user_auth]
       post "/", ThreadController, :insert
-      put "/", ThreadController, :update
 
       pipe_through [:mod_auth]
       put "/mod", ThreadController, :mod_update

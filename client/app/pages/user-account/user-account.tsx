@@ -19,6 +19,7 @@ interface State {
   selectedAvatarIndex: number;
   insufficientScope?: boolean;
   noCharacters: boolean;
+  region: 'us' | 'eu';
 }
 
 @inject('userStore')
@@ -31,6 +32,7 @@ export class UserAccount extends React.Component<Props, State> {
       noCharacters: false,
       selectedCharIndex: 0,
       selectedAvatarIndex: 0,
+      region: 'us', // default to US api
     };
   }
 
@@ -48,8 +50,9 @@ export class UserAccount extends React.Component<Props, State> {
   }
 
   async getCharacters() {
+    const { region } = this.state;
     try {
-      const res = await UserService.getCharacters() as any;
+      const res = await UserService.getCharacters({ region });
       if (res.characters) {
         if (res.characters.length === 0) {
           this.setState({ noCharacters: true });
@@ -60,6 +63,7 @@ export class UserAccount extends React.Component<Props, State> {
           characters,
           selectedRealm: res.characters[0].realm,
           insufficientScope: false,
+          noCharacters: false,
         });
       } else {
         this.setState({ insufficientScope: true });
@@ -92,7 +96,9 @@ export class UserAccount extends React.Component<Props, State> {
     const { name, guild, realm } = this.selectedCharacter();
     const selectedAvatar = this.selectedCharacter().avatarList![this.state.selectedAvatarIndex].title;
     const charClass = CharacterService.getClass(this.selectedCharacter().class);
+    const { region } = this.state;
     const data = {
+      region,
       character_name: name,
       character_class: charClass.name,
       character_guild: guild,
@@ -165,21 +171,17 @@ export class UserAccount extends React.Component<Props, State> {
 
   render() {
 
-    if (this.state.noCharacters) {
-      return <div>You have no WoW characters in your account.</div>;
-    }
-
     // user must be logged in to view this page
     if (!this.props.userStore!.user) {
       return <div></div>;
     }
 
     const { battletag, character_name, character_class, character_guild, character_realm, character_avatar } = this.props.userStore!.user!;
-    const { insufficientScope } = this.state;
+    const { insufficientScope, noCharacters } = this.state;
 
     return (
       <ScrollToTop>
-        <ContentContainer style={{ minHeight: '500px', paddingTop: '40px' }}>
+        <ContentContainer style={{ paddingTop: '40px' }}>
           <div className="flex" style={{ marginBottom: '20px' }}>
             {character_avatar && <Portrait imageSrc={CharacterService.getAvatar(character_avatar!)}/>}
             <div style={{ paddingLeft: '10px' }}>
@@ -193,6 +195,14 @@ export class UserAccount extends React.Component<Props, State> {
               <a onClick={() => this.logout()}>Logout</a>
             </div>
           </div>
+
+          {noCharacters &&
+            <div>
+              <p>Unable to fetch your characters.
+                <a onClick={() => this.setState({ region: 'eu' }, () => this.getCharacters())}>EU account?</a>
+              </p>
+            </div>
+          }
 
           <div>
             {insufficientScope === true ? this.renderScopeError() : this.renderDropDowns()}

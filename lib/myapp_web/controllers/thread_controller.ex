@@ -34,22 +34,6 @@ defmodule MyAppWeb.ThreadController do
     |> Response.json(output)
   end
 
-  @spec update(map, map) :: any
-  def update(conn, params) do
-    user_id = conn
-    |> MyApp.Guardian.Plug.current_claims
-    |> Map.get("id")
-
-    {output, status} = params
-      |> Map.put("user_id",  user_id)
-      |> Data.Thread.user_update
-      |> Response.put_resp
-
-    conn
-    |> put_status(status)
-    |> Response.json(output)
-  end
-  
   @spec get_collection(map, map) :: any
   def get_collection(conn, params) do
 
