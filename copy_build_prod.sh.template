@@ -1,0 +1,4 @@
+# this script is to copy the built project to a production server
+scp -i prod_ssh_key -r ./_build root@<ip>:/home
+scp -i prod_ssh_key ./run_prod.sh root@<ip>:/home
+
