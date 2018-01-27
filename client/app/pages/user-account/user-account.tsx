@@ -198,9 +198,8 @@ export class UserAccount extends React.Component<Props, State> {
 
           {noCharacters &&
             <div>
-              <p>Unable to fetch your characters.
-                <a onClick={() => this.setState({ region: 'eu' }, () => this.getCharacters())}>EU account?</a>
-              </p>
+              <p>Unable to fetch your characters.</p>
+              <a onClick={() => this.setState({ region: 'eu' }, () => this.getCharacters())}>EU account?</a>
             </div>
           }
 

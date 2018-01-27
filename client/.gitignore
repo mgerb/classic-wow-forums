@@ -2,3 +2,5 @@
 node_modules
 yarn-error*
 dist
+prod_ssh_key
+copy_build_prod.sh

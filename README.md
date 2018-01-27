@@ -77,6 +77,8 @@ mix local.hex
 - Check out `.exguard.exs` for configuration.
 
 # Postgres setup
+[Setup on Centos7](https://linode.com/docs/databases/postgresql/how-to-install-postgresql-relational-databases-on-centos-7/)
+
 Change password to postgres user
 ```
 sudo -u user_name psql db_name
@@ -120,3 +122,55 @@ https://localhost {
         }
 }
 ```
+
+# Hosting on Vultr
+
+### Centos setup from scratch
+[Enable private networking](https://www.vultr.com/docs/configuring-private-network)
+```
+/etc/sysconfig/network-scripts/ifcfg-eth1
+
+DEVICE=eth1
+ONBOOT=yes
+NM_CONTROLLED=no
+BOOTPROTO=static
+IPADDR=<ip>
+NETMASK=<netmask>
+IPV6INIT=no
+    MTU=1450
+```
+
+Disable firewalld (make sure firewall is enabled in vultr config)
+```
+systemctl disable firewalld
+```
+
+Install and start postgresql
+```
+sudo yum install postgresql-server postgresql-contrib
+sudo postgresql-setup initdb
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+Configure user
+```
+sudo passwd postgres
+su postgres
+psql -d template1 -c "ALTER USER postgres WITH PASSWORD 'newpassword';"
+```
+
+
+Allow connections on all interfaces
+```
+/var/lib/pgsql/data/postgresql.conf
+
+listen_address='*'
+```
+
+```
+/var/lib/pgsql/data/pg_hba.conf
+
+host    all     all     0.0.0.0/0        md5
+```
+
