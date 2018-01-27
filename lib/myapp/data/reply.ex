@@ -38,7 +38,7 @@ defmodule MyApp.Data.Reply do
     {:ok, data} = Repo.transaction(fn ->
       thread = Repo.get_by(Data.Thread, %{ id: Map.get(params, "thread_id")})
 
-      if !thread.locked do
+      if !is_nil(thread) && !thread.locked do
         {:ok, data} = insert_changeset(%Data.Reply{}, params)
         |> Repo.insert
         |> Data.Util.process_insert_or_update

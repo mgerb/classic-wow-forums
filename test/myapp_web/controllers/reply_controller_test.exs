@@ -7,14 +7,9 @@ defmodule MyAppWeb.ReplyControllerTest do
     new_conn = build_conn()
     |> put_req_header("authorization", "Bearer " <> user.token)
 
-    {:badmatch, {:error, data}} = conn = catch_error(post(new_conn, "/api/reply"))
-    assert data == [%{thread_id: "can't be blank"}, %{content: "can't be blank"}]
-
-    {:badmatch, {:error, data}} = conn = catch_error(post(new_conn, "/api/reply", %{"content" => "t"}))
-    assert data == [%{thread_id: "can't be blank"}]
-
-    {:badmatch, {:error, data}} = conn = catch_error(post(new_conn, "/api/reply",  %{"content" => "t", "thread_id" => 1}))
-    assert data == [%{thread_id: "does not exist"}]
+    conn = post(new_conn, "/api/reply", %{"thread_id" => 1})
+    body = conn |> response(400) |> Poison.decode!
+    assert body == %{"error" => %{"message" => "thread locked", "status" => 400}}
   end
 
   test "insert new reply should succeed" do
@@ -37,10 +32,85 @@ defmodule MyAppWeb.ReplyControllerTest do
     assert data["quote_id"] == nil
 
     # make sure thread reply count and last reply id are updated
-    # conn = get(new_conn, "/api/thread?category_id=1")
-    # body = conn |> response(200) |> Poison.decode!
+    conn = get(new_conn, "/api/thread?category_id=1")
+    body = conn |> response(200) |> Poison.decode!
 
-    # assert Enum.at(body["data"], 0) == "ok"
+    data = Enum.at(body["data"], 0)
+    assert data["last_reply_id"] == user_id
+    assert data["reply_count"] == 1
+  end
+
+  test "user replies should be rate limited" do
+    {:ok, user} = new_user()
+    new_conn = build_conn()
+    |> put_req_header("authorization", "Bearer " <> user.token)
+
+    # insert new thread first
+    conn = post(new_conn, "/api/thread", %{"title" => "t", "category_id" => 1})
+    body = conn |> response(200) |> Poison.decode!
+    thread_id = body["data"]["id"]
+
+    post(new_conn, "/api/reply", %{"content" => "c", "thread_id" => thread_id})
+
+    # post another reply
+    conn = post(new_conn, "/api/reply", %{"content" => "c", "thread_id" => body["data"]["id"]})
+    body = conn |> response(429) |> Poison.decode!
+
+    assert body == %{"error" => %{"message" => "limit reached", "status" => 429}}
+
+    # clear cache
+    Cachex.clear(:myapp)
+
+    # new reply should work
+    conn = post(new_conn, "/api/reply", %{"content" => "c", "thread_id" => thread_id})
+    body = conn |> response(200) |> Poison.decode!
+  end
+
+  test "user update reply" do
+    {:ok, user} = new_user()
+    new_conn = build_conn()
+    |> put_req_header("authorization", "Bearer " <> user.token)
+
+    # insert new thread first
+    conn = post(new_conn, "/api/thread", %{"title" => "t", "category_id" => 1})
+    body = conn |> response(200) |> Poison.decode!
+    thread_id = body["data"]["id"]
+
+    # insert new reply
+    conn = post(new_conn, "/api/reply", %{"content" => "c", "thread_id" => thread_id})
+    body = conn |> response(200) |> Poison.decode!
+    reply_id = body["data"]["id"]
+
+    # should fail
+    conn = put(new_conn, "/api/reply", %{"content" => "new edited content"})
+    body = conn |> response(400) |> Poison.decode!
+    assert body == %{"error" => %{"message" => "Invalid reply", "status" => 400}}
+
+    # should succeed
+    conn = put(new_conn, "/api/reply", %{"content" => "new edited content", "id" => reply_id})
+    body = conn |> response(200) |> Poison.decode!
+    assert body == %{"data" => "ok"}
+  end
+
+  test "mod update reply" do
+    {:ok, user} = new_user()
+    new_conn = build_conn()
+    |> put_req_header("authorization", "Bearer " <> user.token)
+
+    # insert new thread first
+    conn = post(new_conn, "/api/thread", %{"title" => "t", "category_id" => 1})
+    body = conn |> response(200) |> Poison.decode!
+    thread_id = body["data"]["id"]
+
+    # insert new reply
+    conn = post(new_conn, "/api/reply", %{"content" => "c", "thread_id" => thread_id})
+    body = conn |> response(200) |> Poison.decode!
+    reply_id = body["data"]["id"]
+
+    # mod update reply should fail - unauthorized
+    conn = put(new_conn, "/api/reply/mod", %{"content" => "c", "id" => reply_id})
+    body = conn |> response(401) |> Poison.decode!
+    assert body == %{"error" => %{"message" => "unauthorized", "status" => 401}}
   end
 
 end

@@ -8,6 +8,8 @@ defmodule MyApp.Data.TestHelpers do
     |> Auth.Token.add_token_and_map_claims
   end
 
+  # TODO: get admin user
+
   @spec atom_key_to_string(map) :: map
   def atom_key_to_string(map) do
     for {key, val} <- map, into: %{}, do: {Atom.to_string(key), val}

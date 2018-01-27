@@ -7,7 +7,7 @@ defmodule MyAppWeb.PageController do
 
     # cache index.html if prod
     file = case System.get_env("MIX_ENV") do
-      :prod -> 
+      "prod" -> 
         Cachex.get(:myapp, "index.html")
         |> get_file
       _ -> File.read!(Application.app_dir(:myapp, "priv/static/index.html"))
