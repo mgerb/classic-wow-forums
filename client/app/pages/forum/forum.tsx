@@ -159,9 +159,7 @@ export class Forum extends React.Component<Props, State> {
     return (
       <div className="forum-header">
         <ForumNav categoryId={this.routeParams().categoryId} {...this.props}/>
-        <div style={{ height: '100%' }}>
-          <LoginButton onNavigate={dest => this.props.history.push(dest)}/>
-        </div>
+        <LoginButton onNavigate={dest => this.props.history.push(dest)}/>
       </div>
     );
   }
@@ -170,18 +168,18 @@ export class Forum extends React.Component<Props, State> {
     return (
       <div>
         <form className="flex" style={{ marginBottom: 0 }} onSubmit={e => this.onSearch(e)}>
-          <img src={require('../../assets/forum-menu-left.gif')}/>
+          <img className="hide-tiny" src={require('../../assets/forum-menu-left.gif')}/>
           <img src={require('../../assets/forum-menu-newtopic.gif')}
             className="clickable"
             onClick={() => this.onNewTopic()}/>
           <img src={require('../../assets/forum-menu-right.gif')}/>
-          <img src={require('../../assets/forum-menu-search-left.gif')}/>
-          <div className="forum-menu-search-bg">
+          <img className="hide-tiny" src={require('../../assets/forum-menu-search-left.gif')}/>
+          <div className="forum-menu-search-bg hide-tiny">
             <input name="SearchText" onChange={event => this.setState({ searchText: event.target.value })}/>
           </div>
           <input type="image" name="submit"
             src={require('../../assets/forum-menu-search.gif')}
-            className="clickable" style={{ outline: 'none' }}/>
+            className="clickable hide-tiny" style={{ outline: 'none' }}/>
           <div className="forumliner-bg"/>
         </form>
 
@@ -210,16 +208,16 @@ export class Forum extends React.Component<Props, State> {
               </span>
             }
           </td>
-          <td className={`forum-cell forum-cell--body`}>
+          <td className="forum-cell forum-cell--body">
             <b className={authorBluePost}>{user.character_name || user.battletag}</b>
           </td>
-          <td className={`forum-cell forum-cell--body forum-cell--center`}>
+          <td className="forum-cell forum-cell--body forum-cell--center">
             <b>{reply_count}</b>
           </td>
-          <td className={`forum-cell forum-cell--body forum-cell--center`}>
+          <td className="forum-cell forum-cell--body forum-cell--center hide-tiny">
             <b>{view_count}</b>
           </td>
-          <td className={`forum-cell forum-cell--body`}>
+          <td className="forum-cell forum-cell--body hide-tiny">
             <div style={{ fontSize: '8pt' }}>
               by <b className={lastReplyBluePost}>{last_reply.character_name || last_reply.battletag}</b>
             </div>
@@ -272,13 +270,14 @@ export class Forum extends React.Component<Props, State> {
     return show ? <img src={imgSrc}/> : null;
   }
 
-  renderHeaderCell(columnHeader: ColumnHeader, center: boolean) {
+  renderHeaderCell(columnHeader: ColumnHeader, center: boolean, hideTiny?: boolean) {
     const { categoryId, page, threadsPerPage, sortBy, sortOrder } = this.routeParams();
     const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     const centerClass = center ? 'forum-cell--center' : '';
+    const hideClass = hideTiny ? 'hide-tiny' : '';
 
     return (
-      <td className={`forum-cell forum-cell--header ${centerClass}`}>
+      <td className={`forum-cell forum-cell--header ${centerClass} ${hideClass}`}>
         <a onClick={() => this.navigateHere(categoryId, page, threadsPerPage, columnHeader, newSortOrder)}>
           <span>{columnHeader}</span>
           {this.renderSortingArrow(sortBy === columnHeader, sortOrder)}
@@ -303,8 +302,8 @@ export class Forum extends React.Component<Props, State> {
               {this.renderHeaderCell(ColumnHeader.subject, false)}
               {this.renderHeaderCell(ColumnHeader.author, true)}
               {this.renderHeaderCell(ColumnHeader.replies, true)}
-              {this.renderHeaderCell(ColumnHeader.views, true)}
-              {this.renderHeaderCell(ColumnHeader.lastPost, true)}
+              {this.renderHeaderCell(ColumnHeader.views, true, true)}
+              {this.renderHeaderCell(ColumnHeader.lastPost, true, true)}
             </tr>
 
             {/* body */}

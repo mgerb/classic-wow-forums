@@ -79,8 +79,8 @@ export class ForumNav extends React.Component<Props, State> {
     const imageSrc = selectedCategory ? this.getImageSrc() : undefined;
 
     return (
-      <div className="flex">
-        <img src={imageSrc} />
+      <div className="flex" style={{ overflow: 'hidden' }}>
+        <img className="hide-tiny" src={imageSrc} />
         <div className="forum-nav">
           <div className="forum-nav__title">
             <b>{get(selectedCategory, 'title')}</b>

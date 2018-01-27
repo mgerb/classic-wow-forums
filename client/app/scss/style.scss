@@ -1,4 +1,5 @@
 @import '~nprogress/nprogress.css';
+@import './mixins';
 
 $fontPrimary: #cccccc;
 $linkColor: #FFB019;
@@ -178,4 +179,18 @@ div {
 
 .page-link {
   margin: 0 5px;
+}
+
+.hide-tiny {
+  @include breakpoint(mediumOrLess) {
+    display: none;
+  }
+}
+
+.show-tiny {
+  display: none;
+
+  @include breakpoint(mediumOrLess) {
+    display: block;
+  }
 }

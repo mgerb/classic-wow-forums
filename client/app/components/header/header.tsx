@@ -39,7 +39,7 @@ export class Header extends React.Component<Props, State> {
         <div className="linksbar">
           <div className="linksbar-image linksbar-image__left"/>
           <span className="grey">
-            <a href="#">News</a> | <a href="#">Game Info</a> | <a href="#">Forums</a> | <a href="#">Links/Files</a> | <a href="#">Support</a>
+            <Link to="/">Home</Link> | <Link to="/realms">Realms</Link> | <a href="mailto:classicwowforums@gmail.com">Contact</a>
           </span>
           <div className="linksbar-image linksbar-image__right"/>
         </div>

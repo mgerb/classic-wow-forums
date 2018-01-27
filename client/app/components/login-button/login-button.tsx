@@ -7,7 +7,6 @@ import { Oauth } from '../../util';
 import './login-button.scss';
 
 interface Props {
-  className?: string;
   userStore?: UserStore;
   onNavigate: (des: string) => any;
 }
@@ -25,15 +24,18 @@ export class LoginButton extends React.Component<Props, State> {
   renderPortrait() {
     const avatarSrc = CharacterService.getAvatar(this.props.userStore!.user!.character_avatar!);
     return (
-      <div className="portrait-container">
-        <div onClick={() => this.props.onNavigate('/user-account')} style={{ cursor: 'pointer' }}>
-          {avatarSrc && <Portrait imageSrc={avatarSrc}/>}
+      <div>
+        <div className="portrait-container hide-tiny">
+          <div onClick={() => this.props.onNavigate('/user-account')} style={{ cursor: 'pointer' }}>
+            {avatarSrc && <Portrait imageSrc={avatarSrc}/>}
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            {!avatarSrc && <p><a onClick={() => this.props.onNavigate('/user-account')}>Account</a></p>}
+            <div><b>{this.props.userStore!.user!.battletag}</b></div>
+            <div><b>{this.props.userStore!.user!.character_name}</b></div>
+          </div>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          {!avatarSrc && <p><a onClick={() => this.props.onNavigate('/user-account')}>Account</a></p>}
-          <div><b>{this.props.userStore!.user!.battletag}</b></div>
-          <div><b>{this.props.userStore!.user!.character_name}</b></div>
-        </div>
+        <div className="show-tiny" style={{ padding: '10px' }}><a onClick={this.login.bind(this)}>Account</a></div>
       </div>
     );
   }
@@ -42,14 +44,14 @@ export class LoginButton extends React.Component<Props, State> {
     return (
       <div>
         <img src={require('../../assets/login-bot-left.gif')} />
-        <img src={require('../../assets/login-bot-login.gif')} style={{ cursor: 'pointer' }} onClick={this.login.bind(this)} />
+        <img src={require('../../assets/login-bot-login.gif')} style={{ cursor: 'pointer' }} onClick={this.login.bind(this)}/>
         <img src={require('../../assets/login-bot-right.gif')} />
       </div>
     );
   }
   render() {
     return (
-      <div className={this.props.className}>
+      <div className="login-button">
         {this.props.userStore!.user ? this.renderPortrait() : this.renderLoginButton()}
       </div>
     );

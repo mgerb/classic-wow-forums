@@ -251,7 +251,7 @@ export class Thread extends React.Component<Props, State> {
         <div className="topic-bg">
           <div className="threadTopic-container">
             <div className="threadTopic">
-              <img src={require('../../assets/sticky.gif')} style={{ marginRight: '5px' }}/>
+              {thread.sticky && <img src={require('../../assets/sticky.gif')} style={{ marginRight: '5px' }}/>}
               <b>Topic: </b>
               <small style={{ paddingLeft: '15px', color: 'white' }}>| {this.getTimeFormat(thread!.inserted_at)}</small>
             </div>

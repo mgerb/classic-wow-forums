@@ -1,7 +1,10 @@
+@import '../../scss/mixins';
+
 $grey1: #252525;
 $grey2: #161616;
 
 .forum-header {
+  position: relative;
   height: 137px;
   display: flex;
   align-items: center;
@@ -40,6 +43,14 @@ $grey2: #161616;
   b {
     color: #E2D9B0;
   }
+
+  @include breakpoint(mediumOrLess) {
+    font-size: 10px;
+
+    a {
+      font-size: 10px;
+    }
+  }
 }
 
 .forum-table__header {
@@ -74,6 +85,7 @@ $grey2: #161616;
     border: 1px solid;
     border-color: #000000 #000000 #161616 #161616;
     position: relative;
+    word-break: break-word;
   }
 
   &--center {

@@ -8,7 +8,7 @@ $topbg_height: 100px;
   text-align: center;
   z-index: 1;
 
-  @include breakpoint(smallOrLess) {
+  @include breakpoint(mediumOrLess) {
     img {
       height: 80px;
     }
@@ -83,21 +83,26 @@ $topbg_height: 100px;
   background-image: url('../../assets/linksbar-bg.gif');
   background-repeat: repeat-x;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .linksbar-image {
   height: 53px;
   width: 106px;
+  position: absolute;
+  top: 0;
 
   &__left {
     background-image: url('../../assets/linksbar-left.gif');
     background-repeat: no-repeat;
+    left: 0;
   }
 
   &__right {
     background-image: url('../../assets/linksbar-right.gif');
     background-repeat: no-repeat;
+    right: 0;
   }
 }

@@ -69,8 +69,8 @@ export class Realms extends React.Component<Props, State> {
           </div>
 
           <div style={{ margin: '15px 0' }}>
-            <div><b>Welcome to the World of Warcraft Realm Forums!</b></div>
-            <div>Use these forums to discuss topics related to World of Warcraft with player on your own Realm.</div>
+            <div><b>Welcome to the Realm Forums!</b></div>
+            <div>Use these forums to discuss topics related to World of Warcraft with players on your own Realm.</div>
           </div>
 
           <div className="flex flex--wrap">
