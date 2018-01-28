@@ -28,6 +28,7 @@ defmodule MyApp.Data.UserTest do
       battletag: "mgerb",
       id: user.id,
       permissions: "user",
+      expires_in: nil,
     }
 
     # call upsert again with same battletag
@@ -41,6 +42,7 @@ defmodule MyApp.Data.UserTest do
       battletag: "mgerb",
       id: user.id,
       permissions: "user",
+      expires_in: nil,
       character_avatar: nil,
       character_class: nil,
       character_guild: nil,

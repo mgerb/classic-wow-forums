@@ -82,7 +82,7 @@ defmodule MyApp.Data.User do
   # need to add token back to map because we don't store it in the database
   defp add_extra_params({:error, error}, _), do: {:error, error}
   defp add_extra_params({:ok, user}, params) do
-    {:ok, Map.merge(user, params)}
+    {:ok, Map.merge(user, %{access_token: params["access_token"], expires_in: params["expires_in"]})}
   end
 
   defp insert_battlenet_user(params) do

@@ -6,7 +6,6 @@ import './home.scss';
 
 import header_forms from '../../assets/header-forums.gif';
 import support from '../../assets/support.gif';
-// import serverstatus from '../../assets/serverstatus.gif';
 import uicustomizations from '../../assets/uicustomizations.gif';
 import bugs from '../../assets/bugs.gif';
 import realms from '../../assets/realms.gif';
@@ -94,9 +93,10 @@ export class Home extends React.Component<Props, State> {
             <b>Welcome to the unofficial Classic WoW Forums!</b>
           </div>
           <p>
-            This site is made with the intention of providing a web forum
-            that replicates the World of Warcraft forums as they were
-            back in 2005.
+            I created this site with the intention of providing
+            a fully functional and accurate representation of
+            the World of Warcraft forums as they were
+            back in 2005. <Link to={'/t/137/1'}>Please read this first!</Link>
           </p>
 
           <p>

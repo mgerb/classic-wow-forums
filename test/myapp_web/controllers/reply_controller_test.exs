@@ -63,7 +63,7 @@ defmodule MyAppWeb.ReplyControllerTest do
 
     # new reply should work
     conn = post(new_conn, "/api/reply", %{"content" => "c", "thread_id" => thread_id})
-    body = conn |> response(200) |> Poison.decode!
+    conn |> response(200) |> Poison.decode!
   end
 
   test "user update reply" do
