@@ -170,18 +170,20 @@ export class Forum extends React.Component<Props, State> {
     return (
       <div>
         <form className="flex" style={{ marginBottom: 0 }} onSubmit={e => this.onSearch(e)}>
-          <img className="hide-tiny" src={require('../../assets/forum-menu-left.gif')}/>
+          <img className="hide-tiny" style={{ minWidth: '91px' }} src={require('../../assets/forum-menu-left.gif')}/>
           <img src={require('../../assets/forum-menu-newtopic.gif')}
+            style={{ height: '39px' }}
             className="clickable"
             onClick={() => this.onNewTopic()}/>
           <img src={require('../../assets/forum-menu-right.gif')}/>
           <img className="hide-tiny" src={require('../../assets/forum-menu-search-left.gif')}/>
           <div className="forum-menu-search-bg hide-tiny">
-            <input name="SearchText" onChange={event => this.setState({ searchText: event.target.value })}/>
+            <input name="SearchText" className="forum-input" style={{ height: '21px' }}
+              onChange={event => this.setState({ searchText: event.target.value })}/>
           </div>
           <input type="image" name="submit"
             src={require('../../assets/forum-menu-search.gif')}
-            className="clickable hide-tiny" style={{ outline: 'none' }}/>
+            className="clickable hide-tiny" style={{ outline: 'none', height: '39px' }}/>
           <div className="forumliner-bg"/>
         </form>
 
@@ -233,6 +235,7 @@ export class Forum extends React.Component<Props, State> {
     const { categoryId, sortBy, sortOrder } = this.routeParams();
     return (
       <select style={{ margin: '0 5px' }}
+        className="forum-input"
         value={this.routeParams().threadsPerPage}
         onChange={e => this.navigateHere(categoryId, 1, parseInt(e.target.value, 10), sortBy, sortOrder)}
         >

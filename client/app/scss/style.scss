@@ -193,3 +193,8 @@ div {
     display: none;
   }
 }
+
+// needed for firefox inputs
+.forum-input {
+  border: none;
+}

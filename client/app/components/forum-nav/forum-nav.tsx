@@ -88,6 +88,7 @@ export class ForumNav extends React.Component<Props, State> {
           <div className="flex flex--center">
             <small>Forum Nav:</small>
             <select style={{ minWidth: '194px', height: '19px' }}
+              className="forum-input"
               value={this.getSelectedCategoryId()}
               onChange={event => this.onSelect(event)}>
               {this.state.categoryList && this.renderDropDown()}
