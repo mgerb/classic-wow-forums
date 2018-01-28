@@ -20,6 +20,7 @@ interface Props extends RouteComponentProps<any> {
 interface State {
   showEditor: boolean;
   threads: ThreadModel[];
+  threadsLoaded: boolean;
   initialThreads: ThreadModel[];
   pageThreads: ThreadModel[];
   pageLinks: (number | string)[];
@@ -51,6 +52,7 @@ export class Forum extends React.Component<Props, State> {
     this.state = {
       showEditor: false,
       threads: [],
+      threadsLoaded: false,
       initialThreads: [],
       pageThreads: [],
       pageLinks: [],
@@ -87,7 +89,7 @@ export class Forum extends React.Component<Props, State> {
     let threads = await ThreadService.getCategoryThreads(categoryId);
     // remove hidden threads from normal users
     threads = reject(threads, t => !this.props.userStore.isModOrAdmin() && t.hidden);
-    this.setState({ initialThreads: threads });
+    this.setState({ initialThreads: threads, threadsLoaded: true });
     this.processThreads(threads);
   }
 
@@ -322,9 +324,12 @@ export class Forum extends React.Component<Props, State> {
         </h2>
       </div>
     );
+
+    const { threads, threadsLoaded } = this.state;
+
     return (
       <div style={{ padding: '0 3px' }}>
-        {this.state.threads.length > 0 ? table : noThreadsMessage}
+        {threadsLoaded && threads.length < 1 ? noThreadsMessage : table }
         <div className="forumliner-bot-bg"/>
       </div>
     );
