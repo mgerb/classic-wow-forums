@@ -1,3 +1,5 @@
+@import '../../scss/mixins';
+
 .topic-bg {
   background-image: url('../../assets/topic-bg.gif');
   background-repeat: repeat-x;
@@ -63,22 +65,38 @@
     padding: 4px;
     width: 150px;
     border-right: 1px solid #000000;
+
+    @include breakpoint(mediumOrLess) {
+      width: 100px;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    min-height: 26px;
+    border-bottom: 1px solid #000000;
+    padding: 3px 6px;
+
+    @include breakpoint(mediumOrLess) {
+      font-size: 10px;
+    }
   }
 
   &__title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 26px;
-    border-bottom: 1px solid #000000;
-    padding: 0 6px;
     color: white;
+    justify-content: space-between;
 
     &__button {
       cursor: pointer;
 
       & + & {
         margin-left: 3px;
+      }
+
+      @include breakpoint(mediumOrLess) {
+        width: 50px;
+        height: auto;
       }
     }
   }
@@ -98,4 +116,5 @@
 .character-name {
   color: #FFAC04;
   font-weight: bold;
+  white-space: nowrap;
 }

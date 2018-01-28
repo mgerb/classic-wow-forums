@@ -187,10 +187,9 @@ div {
   }
 }
 
-.show-tiny {
-  display: none;
+.hide-large {
 
-  @include breakpoint(mediumOrLess) {
-    display: block;
+  @include breakpoint(mediumOrMore) {
+    display: none;
   }
 }

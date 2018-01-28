@@ -160,7 +160,7 @@ export class UserAccount extends React.Component<Props, State> {
             const avatarClass = this.state.selectedAvatarIndex === index ? 'avatar-list__item--selected' : '';
             return (
               <div key={index} className={`avatar-list__item ${avatarClass}`} onClick={() => this.onAvatarSelect(index)}>
-                <img src={val.imageSrc}/>
+                <img className="avatar-list__image" src={val.imageSrc}/>
               </div>
             );
           })}

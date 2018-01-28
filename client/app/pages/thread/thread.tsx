@@ -149,7 +149,7 @@ export class Thread extends React.Component<Props, State> {
   renderUserInfo(reply: ReplyModel) {
     const { battletag, character_avatar, character_class, character_guild, character_name, character_realm, permissions } = reply.user;
     return (
-      <div className="reply__user-container">
+      <div className="reply__user-container hide-tiny">
         <Portrait imageSrc={CharacterService.getAvatar(character_avatar)}/>
         <div style={{ textAlign: 'center' }}>
           <div className="character-name">{character_name || battletag}</div>
@@ -158,6 +158,18 @@ export class Thread extends React.Component<Props, State> {
           {character_realm && <div><small><b>Realm: </b>{character_realm}</small></div>}
           {permissions === 'admin' && <div className="blue">Admin Poster</div>}
         </div>
+      </div>
+    );
+  }
+
+  renderUserInfoTiny(reply: ReplyModel) {
+    const { battletag, character_class, character_guild, character_name, character_realm, permissions } = reply.user;
+
+    return (
+      <div className="reply__header hide-large">
+        <div className="character-name" style={{ paddingRight: '4px' }}>{character_name || battletag } -</div>
+        {permissions === 'admin' && <div className="blue">Admin Poster</div>}
+        {[character_class, character_guild, character_realm].filter(val => !!val).join(' - ')}
       </div>
     );
   }
@@ -189,7 +201,9 @@ export class Thread extends React.Component<Props, State> {
             {this.renderUserInfo(reply)}
             <div className="flex-1">
 
-              <div className="reply__title">
+              {this.renderUserInfoTiny(reply)}
+
+              <div className="reply__title reply__header">
                 <div>
                   <b>{`${reply.index! + 1}. `}{index > 0 && 'Re: '}{this.state.thread!.title}</b>
                   <small style={{ paddingLeft: '5px' }}>| {this.getTimeFormat(reply.inserted_at)}</small>
@@ -252,8 +266,7 @@ export class Thread extends React.Component<Props, State> {
           <div className="threadTopic-container">
             <div className="threadTopic">
               {thread.sticky && <img src={require('../../assets/sticky.gif')} style={{ marginRight: '5px' }}/>}
-              <b>Topic: </b>
-              <small style={{ paddingLeft: '15px', color: 'white' }}>| {this.getTimeFormat(thread!.inserted_at)}</small>
+              <small style={{ color: 'white' }}>{this.getTimeFormat(thread!.inserted_at)}</small>
             </div>
           </div>
           <img src={require('../../assets/forum-index.gif')}

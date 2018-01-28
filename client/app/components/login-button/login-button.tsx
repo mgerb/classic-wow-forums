@@ -35,7 +35,7 @@ export class LoginButton extends React.Component<Props, State> {
             <div><b>{this.props.userStore!.user!.character_name}</b></div>
           </div>
         </div>
-        <div className="show-tiny" style={{ padding: '10px' }}><a onClick={this.login.bind(this)}>Account</a></div>
+        <div className="hide-large" style={{ padding: '10px' }}><a onClick={() => this.props.onNavigate('/user-account')}>Account</a></div>
       </div>
     );
   }

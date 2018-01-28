@@ -212,10 +212,10 @@ export class Forum extends React.Component<Props, State> {
             <b className={authorBluePost}>{user.character_name || user.battletag}</b>
           </td>
           <td className="forum-cell forum-cell--body forum-cell--center">
-            <b>{reply_count}</b>
+            <b>{reply_count.toLocaleString()}</b>
           </td>
           <td className="forum-cell forum-cell--body forum-cell--center hide-tiny">
-            <b>{view_count}</b>
+            <b>{view_count.toLocaleString()}</b>
           </td>
           <td className="forum-cell forum-cell--body hide-tiny">
             <div style={{ fontSize: '8pt' }}>
@@ -287,33 +287,44 @@ export class Forum extends React.Component<Props, State> {
   }
 
   renderTable() {
+    const table = (
+      <table className="forum-table">
+        <tbody>
+
+          {/* header */}
+          {this.renderHeaderFooter()}
+
+          <tr className="forum-table__header">
+            <td className={`forum-cell forum-cell--header forum-cell--center`} style={{ maxWidth: '50px' }}>
+              <img src={require('../../assets/flag.gif')}/>
+            </td>
+            {this.renderHeaderCell(ColumnHeader.subject, false)}
+            {this.renderHeaderCell(ColumnHeader.author, true)}
+            {this.renderHeaderCell(ColumnHeader.replies, true)}
+            {this.renderHeaderCell(ColumnHeader.views, true, true)}
+            {this.renderHeaderCell(ColumnHeader.lastPost, true, true)}
+          </tr>
+
+          {/* body */}
+          {this.renderThreadRows()}
+
+          {/* footer  */}
+          {this.renderHeaderFooter()}
+
+        </tbody>
+      </table>
+    );
+
+    const noThreadsMessage = (
+      <div className="no-threads-message">
+        <h2>There doesn't seem to be any topics
+          here. <a style={{ fontSize: 'initial' }} onClick={() => this.onNewTopic()}>Make the first one!</a>
+        </h2>
+      </div>
+    );
     return (
       <div style={{ padding: '0 3px' }}>
-        <table className="forum-table">
-          <tbody>
-
-            {/* header */}
-            {this.renderHeaderFooter()}
-
-            <tr className="forum-table__header">
-              <td className={`forum-cell forum-cell--header forum-cell--center`} style={{ maxWidth: '50px' }}>
-                <img src={require('../../assets/flag.gif')}/>
-              </td>
-              {this.renderHeaderCell(ColumnHeader.subject, false)}
-              {this.renderHeaderCell(ColumnHeader.author, true)}
-              {this.renderHeaderCell(ColumnHeader.replies, true)}
-              {this.renderHeaderCell(ColumnHeader.views, true, true)}
-              {this.renderHeaderCell(ColumnHeader.lastPost, true, true)}
-            </tr>
-
-            {/* body */}
-            {this.renderThreadRows()}
-
-            {/* footer  */}
-            {this.renderHeaderFooter()}
-
-          </tbody>
-        </table>
+        {this.state.threads.length > 0 ? table : noThreadsMessage}
         <div className="forumliner-bot-bg"/>
       </div>
     );

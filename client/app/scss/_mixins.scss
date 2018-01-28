@@ -2,7 +2,12 @@
   @if $point == smallOrLess {
     @media (max-width: 420px) { @content ; }
   }
+
   @else if $point == mediumOrLess {
     @media (max-width: 540px) { @content ; }
+  }
+
+  @else if $point == mediumOrMore {
+    @media (min-width: 541px) { @content ; }
   }
 }
