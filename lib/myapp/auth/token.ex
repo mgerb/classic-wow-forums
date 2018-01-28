@@ -1,17 +1,15 @@
 defmodule MyApp.Guardian.Auth.Token do
   alias MyApp.Guardian
-  
-  # ~1 year
-  defp tokenTTL(), do: {52, :weeks}
 
   @spec add_token_and_map_claims(map | {atom, any}) :: {:ok, map} | {:error, String.t}
   def add_token_and_map_claims(user) when is_map(user) do
 
     claims = user
-    |> Map.take([:id, :battletag, :battle_net_id, :access_token]) # take values from user object to map to claims
+    |> Map.take([:id, :battletag, :battle_net_id, "access_token"]) # take values from user object to map to claims
     |> Guardian.add_permissions(get_permissions(user))
 
-    case Guardian.encode_and_sign(user, claims, ttl: tokenTTL()) do
+    # set token expiration to the same as the battlenet token
+    case Guardian.encode_and_sign(user, claims, ttl: {user["expires_in"], :seconds}) do
       {:ok, token, _claims} -> {:ok, Map.merge(user, %{token: token})}
       {:error, error} -> {:error, error}
     end

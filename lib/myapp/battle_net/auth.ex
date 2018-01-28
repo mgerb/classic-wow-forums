@@ -4,7 +4,7 @@ defmodule MyApp.BattleNet.Auth do
 
   def token_uri, do: "https://us.battle.net/oauth/token"
 
-  @spec get_access_token(String.t) :: {:ok, String.t} | {:error, String.t}
+  @spec get_access_token(String.t) :: {:ok, %{access_token: String.t, expires_id: integer}} | {:error, String.t}
   def get_access_token(code) do
     client_id = Application.get_env(:myapp, :bnet_client_id)
     client_secret = Application.get_env(:myapp, :bnet_client_secret)
@@ -20,9 +20,9 @@ defmodule MyApp.BattleNet.Auth do
   defp parse_body({:error, err}), do: {:error, err}
   defp parse_body({:ok, %HTTPoison.Response{body: body}}), do: Poison.decode(body)
 
-  defp parse_token({:ok, %{"access_token" => token}}), do: {:ok, token}
   defp parse_token({:ok, %{"error" => error}}), do: {:error, error}
   defp parse_token({:error, err}), do: {:error, "Authentication error"}
+  defp parse_token({:ok, data}) when is_map(data), do: {:ok, data}
 
   @spec get_req_body(String.t) :: tuple
   defp get_req_body(code) do

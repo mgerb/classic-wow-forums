@@ -1,28 +1,26 @@
 defmodule MyApp.BattleNet.User do
 
-  @type battle_net_user :: %{"battle_net_id": integer, "battletag": String.t, "access_token": String.t}
-
   def api_url(region), do: "https://#{region}.api.battle.net"
 
   def cache_key(user_id, region), do: "usr_char:#{user_id}:#{region}"
 
   # grab user information from battle net api - use token for auth
-  @spec get_user(String.t | {atom, any}, String.t) :: {:ok, battle_net_user} | {:error, any}
-  def get_user(access_token, region) when is_binary(access_token) do
-    access_token
+  @spec get_user(%{"access_token": String.t, "expires_in": integer}, String.t) :: {:ok, map} | {:error, any}
+  def get_user(data, region) when is_map(data) do
+    data["access_token"]
     |> resource_url("account/user", region)
     |> HTTPoison.get
-    |> parse_user_response(access_token)
+    |> parse_user_response(data)
   end
-  def get_user({:ok, access_token}, region), do: get_user(access_token, region)
+  def get_user({:ok, data}, region), do: get_user(data, region)
   def get_user({:error, error}, _), do: {:error, error}
 
   defp parse_user_response({:error, error}, _), do: {:error, error}
-  defp parse_user_response({:ok, %HTTPoison.Response{body: body}}, access_token) do
+  defp parse_user_response({:ok, %HTTPoison.Response{body: body}}, data) do
     case Poison.decode(body) do
       {:ok, user} ->
         user = user
-        |> Map.merge(%{"access_token" => access_token}) # add access token to return map
+        |> Map.merge(data) # merge blizzard user api info
         |> Map.put("battle_net_id", Map.get(user, "id")) # change id key to battle_net_id
         |> Map.delete("id") # remove id key
         {:ok, user}

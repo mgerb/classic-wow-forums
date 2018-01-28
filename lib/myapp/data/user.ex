@@ -74,15 +74,15 @@ defmodule MyApp.Data.User do
     end
 
     output
-    |> add_access_token(Map.get(params, "access_token"))
+    |> add_extra_params(params)
   end
   def upsert_user({:ok, params}), do: upsert_user(params)
   def upsert_user({:error, error}), do: {:error, error}
 
   # need to add token back to map because we don't store it in the database
-  defp add_access_token({:error, error}, _), do: {:error, error}
-  defp add_access_token({:ok, user}, access_token) do
-    {:ok, Map.merge(user, %{access_token: access_token})}
+  defp add_extra_params({:error, error}, _), do: {:error, error}
+  defp add_extra_params({:ok, user}, params) do
+    {:ok, Map.merge(user, params)}
   end
 
   defp insert_battlenet_user(params) do
