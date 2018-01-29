@@ -160,6 +160,9 @@ defmodule Category do
       %{"id" => 128, "category" => "realm", "title" => "Wildhammer"},
       %{"id" => 129, "category" => "realm", "title" => "Windrunner"},
       %{"id" => 130, "category" => "realm", "title" => "Zul'jin"},
+
+      # additional realms
+      %{"id" => 143, "category" => "realm", "title" => "Sentinels"},
     ]
   end
 

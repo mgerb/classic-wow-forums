@@ -174,3 +174,7 @@ listen_address='*'
 host    all     all     0.0.0.0/0        md5
 ```
 
+# Database backup script
+```
+ssh -i ./prod_ssh_key root@<addr> 'su - postgres -c "pg_dump -U postgres myapp_prod"' >> "$(date +"%Y_%m_%d_%I_%M_%p")backup.sql"
+```
