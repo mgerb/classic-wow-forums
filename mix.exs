@@ -4,7 +4,7 @@ defmodule MyApp.Mixfile do
   def project do
     [
       app: :myapp,
-      version: "1.0.0",
+      version: "1.0.1",
       elixir: "~> 1.5.2",
       elixirc_paths: elixirc_paths(Mix.env),
       compilers: [:phoenix, :gettext] ++ Mix.compilers,

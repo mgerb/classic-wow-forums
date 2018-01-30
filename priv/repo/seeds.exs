@@ -147,7 +147,6 @@ defmodule Category do
       %{"id" => 115, "category" => "realm", "title" => "Stormscale"},
       %{"id" => 116, "category" => "realm", "title" => "Suramar"},
       %{"id" => 117, "category" => "realm", "title" => "Terenas"},
-      %{"id" => 118, "category" => "realm", "title" => "Test"},
       %{"id" => 119, "category" => "realm", "title" => "Thunderhorn"},
       %{"id" => 120, "category" => "realm", "title" => "Thunderlord"},
       %{"id" => 121, "category" => "realm", "title" => "Tichondrius"},
@@ -198,9 +197,8 @@ Enum.each(Category.get_seed(), fn(cat) ->
   end)
 end)
 
-# TODO: Fix this for testing
 # insert admin user
-accounts = Application.get_env(:myapp, :admin_accounts)
+accounts = Application.get_env(:myapp, :admin_accounts) || []
 
 Enum.each(accounts, fn (user) ->
   Repo.transaction(fn ->
