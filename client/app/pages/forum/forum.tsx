@@ -322,8 +322,8 @@ export class Forum extends React.Component<Props, State> {
 
     const noThreadsMessage = (
       <div className="no-threads-message">
-        <h2>There doesn't seem to be any topics
-          here. <a style={{ fontSize: 'initial' }} onClick={() => this.onNewTopic()}>Make the first one!</a>
+        <h2>There doesn't seem to be anything
+          here. <a style={{ fontSize: 'initial' }} onClick={() => this.onNewTopic()}>Create the first topic!</a>
         </h2>
       </div>
     );
