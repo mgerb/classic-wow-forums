@@ -37,6 +37,8 @@ export class ForumNav extends React.Component<Props, State> {
 
   setSelectedCategory(categoryList: CategoryModel[], categoryId: number) {
     const selectedCategory = find(categoryList, { id: categoryId });
+    // set page title here
+    document.title = selectedCategory!.title;
     this.setState({ selectedCategory });
   }
 

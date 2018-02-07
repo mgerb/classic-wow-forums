@@ -1,4 +1,9 @@
 User-agent: *
-Disallow: /login
-Disallow: /api
 Allow: /
+Allow: /f/*
+Allow: /t/*
+Allow: /realms
+Disallow: /login
+Disallow: /api/*
+
+Sitemap: https://classicwowforums.com/sitemap.xml

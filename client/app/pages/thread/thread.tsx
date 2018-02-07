@@ -68,6 +68,7 @@ export class Thread extends React.Component<Props, State> {
   }
 
   private processReplies(thread: ThreadModel, props: Props = this.props) {
+    document.title = get(thread, 'title');
     thread.replies = chain(thread.replies)
       .orderBy(['inserted_at'], ['asc'])
       .map((r, i) => { r.index = i; return r; })

@@ -16,7 +16,7 @@ export class Header extends React.Component<Props, State> {
       <div>
         <div className="wowlogo2">
           <Link to="/">
-            <img src={wowlogo2}/>
+            <img src={wowlogo2} alt="Classic WoW Forums"/>
           </Link>
         </div>
 

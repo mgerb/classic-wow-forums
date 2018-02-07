@@ -41,10 +41,14 @@ export class Home extends React.Component<Props, State> {
     super(props);
   }
 
+  componentDidMount() {
+    document.title = 'Classic WoW Forums';
+  }
+
   private renderTopic(topicId: number | string, title: string, icon: any, text: string): any {
     return (
       <div className="topic-item">
-        <img className="topic-item-icon" src={icon} />
+        <img className="topic-item-icon" src={icon} alt={title}/>
         <div>
           <Link to={typeof topicId === 'number' ? `/f/${topicId}` : topicId}>{title}</Link>
           <div>{text}</div>
@@ -56,7 +60,7 @@ export class Home extends React.Component<Props, State> {
   private renderClass(title: string, topicId: number, icon: any): any {
     return (
       <div className="flex flex--center" style={{ flex: 1 }}>
-        <img className="topic-item-icon" src={icon} />
+        <img className="topic-item-icon" src={icon} alt={title}/>
         <Link to={`/f/${topicId}`}>{title}</Link>
       </div>
     );
@@ -88,9 +92,9 @@ export class Home extends React.Component<Props, State> {
     return (
       <ScrollToTop>
         <ContentContainer>
-          <img src={header_forms} />
+          <img src={header_forms} alt="Forum Community"/>
           <div>
-            <b>Welcome to the unofficial Classic WoW Forums!</b>
+            <h1 style={{ margin: '0', fontSize: '10pt', fontWeight: 'bolder' }}>Welcome to the unofficial Classic WoW Forums!</h1>
           </div>
           <p>
             I created this site with the intention of providing
@@ -133,7 +137,7 @@ export class Home extends React.Component<Props, State> {
             <div className="topic-row topic-row__classes">
               <div className="topic-item topic-item__classes">
                 <div className="flex" style={{ marginBottom: '10px' }}>
-                  <img className="topic-item-icon" src={bullet} />
+                  <img className="topic-item-icon" src={bullet} alt="bullet"/>
                   <div>
                     <b>Classes</b>
                     <div>Discuss your favorite class:</div>
@@ -144,21 +148,21 @@ export class Home extends React.Component<Props, State> {
 
               <div className="topic-item topic-item__classes">
                 <div className="item-row" style={{ minWidth: '250px' }}>
-                  <img className="topic-item-icon" src={professions} />
+                  <img className="topic-item-icon" src={professions} alt="Professions"/>
                   <div>
                     <Link to="/f/140">Professions</Link>
                     <div>Discuss professions in detail.</div>
                   </div>
                 </div>
                 <div className="item-row">
-                  <img className="topic-item-icon" src={pvp} />
+                  <img className="topic-item-icon" src={pvp} alt="pvp"/>
                   <div>
                     <Link to="/f/141">PvP Discussion</Link>
                     <div>Discuss player versus player combat.</div>
                   </div>
                 </div>
                 <div className="item-row">
-                  <img className="topic-item-icon" src={quests} />
+                  <img className="topic-item-icon" src={quests} alt="Quests"/>
                   <div>
                     <Link to="/f/142">Quest Discussion</Link>
                     <div>Talk about and get help with the countless quests in World of Warcraft.</div>

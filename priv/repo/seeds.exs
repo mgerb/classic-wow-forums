@@ -162,6 +162,7 @@ defmodule Category do
 
       # additional realms
       %{"id" => 143, "category" => "realm", "title" => "Sentinels"},
+      %{"id" => 144, "category" => "realm", "title" => "Vek'nilash"},
     ]
   end
 

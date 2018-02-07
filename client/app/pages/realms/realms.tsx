@@ -24,6 +24,7 @@ export class Realms extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
+    document.title = 'Realms';
     try {
       const res = await CategoryService.getCategories();
       const realms = chain(res)
