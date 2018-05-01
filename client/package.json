@@ -6,8 +6,7 @@
     "build": "webpack -p --progress --colors",
     "dev": "webpack --progress --colors --watch",
     "c9": "webpack-dev-server --host 0.0.0.0 --port 8080 --inline --history-api-fallback",
-    "start": "webpack-dev-server --inline --history-api-fallback",
-    "update-latest": "rm -rf node_modules && rm yarn.lock && ncu --upgrade --upgradeAll && yarn install"
+    "start": "webpack-dev-server --inline --history-api-fallback"
   },
   "dependencies": {
     "@types/fingerprintjs2": "^1.5.1",

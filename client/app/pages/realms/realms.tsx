@@ -30,7 +30,7 @@ export class Realms extends React.Component<Props, State> {
       const realms = chain(res)
         .filter({ category: 'realm' })
         .orderBy(['title'])
-        .value();
+        .value() as CategoryModel[];
       this.setState({ realms });
     } catch (e) {
       console.error(e);

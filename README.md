@@ -24,8 +24,8 @@ Made with:
 
 ## Build the client
 - `cd client`
-- `yarn install`
-- `yarn run dev`
+- `npm install`
+- `npm run dev`
 
 # Ecto
 

@@ -130,7 +130,7 @@ export class Forum extends React.Component<Props, State> {
 
   private onSearch(event: any) {
     event.preventDefault();
-    const threads = filter(cloneDeep(this.state.initialThreads), (t) => {
+    const threads: any = filter(cloneDeep(this.state.initialThreads), (t) => {
       return t.title.toLowerCase().match(this.state.searchText.toLowerCase());
     });
 

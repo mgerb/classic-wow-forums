@@ -3,7 +3,7 @@ clean:
 	rm -rf _build
 
 build-client:
-	cd client && yarn install && yarn run build
+	cd client && npm install && npm run build
 
 build-server:
 	MIX_ENV=prod mix deps.get && MIX_ENV=prod mix release --env=prod

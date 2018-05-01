@@ -26,13 +26,6 @@ defmodule MyApp.Data.Reply do
   end
 
   # allow user to update reply
-  defp user_update_changeset(reply, params \\ %{}) do
-    reply
-    |> cast(params, [:content])
-    |> force_change(:edited, true) # set edited flag on update
-    |> validate_required([:content])
-  end
-
   @spec insert(map) :: {:ok, map} | {:error, map}
   def insert(params) do
     {:ok, data} = Repo.transaction(fn ->

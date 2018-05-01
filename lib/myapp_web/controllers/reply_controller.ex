@@ -50,10 +50,8 @@ defmodule MyAppWeb.ReplyController do
 
   @spec mod_update(map, map) :: any
   def mod_update(conn, params) do
-    {:ok, _} = Data.Reply.mod_update(params)
-    conn
-    |> put_status(200)
-    |> Response.json("ok")
+    Data.Reply.mod_update(params)
+    Response.json(conn, "ok")
   end
   
 end
