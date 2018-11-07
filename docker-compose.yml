@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  cwf:
+    image: mgerb/classic-wow-forums:latest
+    ports:
+    - 8080:80
+    environment:
+    - DB_HOST=
+    - DB_USER=
+    - DB_PASS=
+    - SECRET_KEY_BASE=
+    - GUARDIAN_SECRET=
+    - BNET_CLIENT_ID=
+    - BNET_CLIENT_SECRET=
+    - BNET_REDIRECT_URI=
+    - ADMIN_USERNAME=
+    - ADMIN_PASSWORD=
+    - ADMIN_CHAR_NAME=
+    - ADMIN_CHAR_AVATAR=
+    - ADMIN_PERMISSIONS=
+    command: sh -c "_build/prod/rel/myapp/bin/myapp migrate && _build/prod/rel/myapp/bin/myapp seed && _build/prod/rel/myapp/bin/myapp foreground"

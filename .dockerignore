@@ -19,3 +19,4 @@ erl_crash.dump
 uploads
 
 /priv/static/*
+/client/node_modules

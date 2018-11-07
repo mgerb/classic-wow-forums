@@ -45,28 +45,6 @@ Made with:
 docker run --name postgres1 -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
 ```
 
-# Postgres setup
-[Setup on Centos7](https://linode.com/docs/databases/postgresql/how-to-install-postgresql-relational-databases-on-centos-7/)
-
-Change password to postgres user
-```
-sudo -u user_name psql db_name
-
-or 
-
-ALTER USER postgres WITH PASSWORD 'new_password';
-```
-
-Edit /var/lib/pgsql/data/pg_hba.conf
-
-```
-local   all   all   trust
-```
-
-```
-systemctl restart postgresql
-```
-
 # Battlenet API
 Battlenet required https for a redirect for authentication. I use caddy for https proxy during development.
 
