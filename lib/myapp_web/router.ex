@@ -22,6 +22,8 @@ defmodule MyAppWeb.Router do
   scope "/api", MyAppWeb do
     pipe_through [:api]
 
+    get "/config", ConfigController, :get_config
+
     scope "/user" do
       post "/authorize", UserController, :authorize
       post "/login", UserController, :login
