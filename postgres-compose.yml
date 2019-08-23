@@ -1,0 +1,13 @@
+# used for dev
+
+version: '2'
+
+services:
+  cwf-postgres:
+    image: postgres
+    environment:
+    - POSTGRES_PASSWORD=postgres
+    ports:
+    - 5432:5432
+    volumes:
+    - ./backups:/home/backups

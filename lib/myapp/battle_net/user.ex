@@ -1,6 +1,7 @@
 defmodule MyApp.BattleNet.User do
 
-  def api_url(region), do: "https://#{region}.api.battle.net"
+  def api_url(region), do: "https://#{region}.api.blizzard.com"
+  def api_url_non_api(region), do: "https://#{region}.battle.net"
 
   def cache_key(user_id, region), do: "usr_char:#{user_id}:#{region}"
 
@@ -8,7 +9,7 @@ defmodule MyApp.BattleNet.User do
   @spec get_user(%{"access_token": String.t, "expires_in": integer}, String.t) :: {:ok, map} | {:error, any}
   def get_user(data, region) when is_map(data) do
     data["access_token"]
-    |> resource_url("account/user", region)
+    |> resource_url_non_api("oauth/userinfo", region)
     |> HTTPoison.get
     |> parse_user_response(data)
   end
@@ -59,6 +60,10 @@ defmodule MyApp.BattleNet.User do
 
   defp resource_url(access_token, path, region) do
     "#{api_url(region)}/#{path}?access_token=#{access_token}"
+  end
+
+  defp resource_url_non_api(access_token, path, region) do
+    "#{api_url_non_api(region)}/#{path}?access_token=#{access_token}"
   end
 
 end
