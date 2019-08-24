@@ -163,6 +163,26 @@ defmodule Category do
       # additional realms
       %{"id" => 143, "category" => "realm", "title" => "Sentinels"},
       %{"id" => 144, "category" => "realm", "title" => "Vek'nilash"},
+
+      # classic realms
+      %{"id" => 145, "category" => "classic_realm", "title" => "Atiesh"},
+      %{"id" => 146, "category" => "classic_realm", "title" => "Mankrik"},
+      %{"id" => 147, "category" => "classic_realm", "title" => "Myzrael"},
+      %{"id" => 148, "category" => "classic_realm", "title" => "Pagle"},
+      %{"id" => 149, "category" => "classic_realm", "title" => "Faerlina"},
+      %{"id" => 150, "category" => "classic_realm", "title" => "Fairbanks"},
+      %{"id" => 151, "category" => "classic_realm", "title" => "Herod"},
+      %{"id" => 152, "category" => "classic_realm", "title" => "Thalnos"},
+      %{"id" => 153, "category" => "classic_realm", "title" => "Whitemane"},
+      %{"id" => 154, "category" => "classic_realm", "title" => "Stalagg"},
+      %{"id" => 155, "category" => "classic_realm", "title" => "Blaumeux"},
+      %{"id" => 156, "category" => "classic_realm", "title" => "Skeram"},
+      %{"id" => 157, "category" => "classic_realm", "title" => "Bloodsail Buccaneers"},
+      %{"id" => 158, "category" => "classic_realm", "title" => "Grobbulus"},
+      %{"id" => 159, "category" => "classic_realm", "title" => "Incendius"},
+      %{"id" => 160, "category" => "classic_realm", "title" => "Bigglesworth"},
+      %{"id" => 161, "category" => "classic_realm", "title" => "Old Blanchy"},
+      %{"id" => 162, "category" => "classic_realm", "title" => "Westfall"},
     ]
   end
 

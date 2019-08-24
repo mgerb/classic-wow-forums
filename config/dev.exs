@@ -8,7 +8,7 @@ use Mix.Config
 # with brunch.io to recompile .js and .css sources.
 config :myapp, MyAppWeb.Endpoint,
   host: "0.0.0.0",
-  http: [port: 8080],
+  http: [port: 5035],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,

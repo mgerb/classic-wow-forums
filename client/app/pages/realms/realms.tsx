@@ -12,6 +12,7 @@ interface Props extends RouteComponentProps<any> {}
 
 interface State {
   realms: CategoryModel[];
+  classicRealms: CategoryModel[];
 }
 
 export class Realms extends React.Component<Props, State> {
@@ -20,6 +21,7 @@ export class Realms extends React.Component<Props, State> {
     super(props);
     this.state = {
       realms: [],
+      classicRealms: [],
     };
   }
 
@@ -31,7 +33,11 @@ export class Realms extends React.Component<Props, State> {
         .filter({ category: 'realm' })
         .orderBy(['title'])
         .value() as CategoryModel[];
-      this.setState({ realms });
+      const classicRealms = chain(res)
+        .filter({ category: 'classic_realm' })
+        .orderBy(['title'])
+        .value() as CategoryModel[];
+      this.setState({ realms, classicRealms });
     } catch (e) {
       console.error(e);
     }
@@ -73,6 +79,14 @@ export class Realms extends React.Component<Props, State> {
             <div><b>Welcome to the Realm Forums!</b></div>
             <div>Use these forums to discuss topics related to World of Warcraft with players on your own Realm.</div>
           </div>
+
+          <h1>Classic Realms</h1>
+
+          <ul className="realm-column">
+            {this.renderRealms(this.state.classicRealms)}
+          </ul>
+
+          <h1>Legacy Realms</h1>
 
           <div className="flex flex--wrap">
             <ul className="realm-column">
