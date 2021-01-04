@@ -20,7 +20,7 @@
     "@types/react-dom": "^16.0.3",
     "@types/react-router-dom": "^4.2.3",
     "autoprefixer": "^7.2.4",
-    "axios": "^0.17.1",
+    "axios": "^0.21.1",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-add-module-exports": "^0.2.1",
